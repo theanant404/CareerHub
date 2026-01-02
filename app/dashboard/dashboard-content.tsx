@@ -59,7 +59,7 @@ export default function DashboardContent() {
 
           <div className="flex items-center gap-4">
             <span className="text-sm text-muted-foreground hidden sm:inline">{user.email}</span>
-            <Button onClick={handleLogout} variant="ghost" className="text-foreground hover:bg-foreground/10 gap-2">
+            <Button onClick={handleLogout} variant="ghost" className="hover:bg-foreground/10 gap-2">
               <LogOut className="w-4 h-4" />
               Logout
             </Button>

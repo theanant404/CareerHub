@@ -39,7 +39,7 @@ export default function Header() {
         <div className="hidden md:flex items-center gap-3">
           <ThemeToggle />
           <Link href="/login">
-            <Button variant="ghost" className="text-foreground hover:bg-foreground/10">
+            <Button variant="ghost" className="hover:bg-foreground/10">
               Sign In
             </Button>
           </Link>
@@ -72,7 +72,7 @@ export default function Header() {
               <div className="flex gap-2 pt-4">
                 <ThemeToggle />
                 <Link href="/login" className="flex-1">
-                  <Button variant="outline" className="w-full bg-transparent">
+                  <Button variant="outline" className="w-full">
                     Sign In
                   </Button>
                 </Link>

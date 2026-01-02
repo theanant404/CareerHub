@@ -29,7 +29,7 @@ export default function Hero() {
               <ArrowRight className="ml-2 w-4 h-4" />
             </Button>
           </Link>
-          <Button size="lg" variant="outline" className="glassmorphic w-full sm:w-auto bg-transparent">
+          <Button size="lg" variant="outline" className="glassmorphic w-full sm:w-auto">
             Watch Tutorial
           </Button>
         </div>
