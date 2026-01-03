@@ -1,21 +1,22 @@
 # CareerHub 🚀
 
-CareerHub is a modern **career discovery platform** built with **Next.js App Router** that helps users find **jobs, scholarships, and internships** through a clean, glassmorphic UI and scalable architecture.
+[![ECWOC 2026](https://img.shields.io/badge/ECWOC-2026-blueviolet?style=for-the-badge&logo=opensourceinitiative)](https://ecwoc.tech)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+CareerHub is a modern **career discovery platform** built with **Next.js App Router**. We help students and professionals find **jobs, scholarships, and internships** through a clean, glassmorphic UI and a scalable architecture.
 
 ---
 
-## ✨ Key Features
-
-* 🔍 **Jobs, Scholarships & Internships** in one place
-* 📍 **Smart location-based filtering** (remote, on-site, relocation)
-* 🎨 **Glassmorphic & responsive UI** with smooth animations
-* ⚡ **Fast & scalable** using Next.js App Router
-* 🌗 **Theme toggle** (light / dark mode)
+## 🚀 Quick Overview (TL;DR)
+CareerHub is designed for fast opportunity discovery:
+* **Unified Search:** Jobs, Scholarships, and Internships in one place.
+* **Smart Filtering:** Filter by location (remote, on-site, or relocation).
+* **Modern UI:** Glassmorphic design with a built-in Dark/Light theme toggle.
+* **Performance:** Powered by Next.js for speed and scalability.
 
 ---
 
 ## 🛠 Tech Stack
-
 * **Framework:** Next.js (App Router)
 * **Styling:** Tailwind CSS
 * **UI Components:** shadcn/ui
@@ -24,146 +25,88 @@ CareerHub is a modern **career discovery platform** built with **Next.js App Rou
 
 ---
 
-## 📂 Folder Structure (Updated)
+## 📂 Folder Structure (Beginner's Guide)
 
-```
+Understanding where things live in the project:
+
+```text
 CAREERHUB/
-├── app/
-│   ├── dashboard/
-│   │   ├── dashboard-content.tsx   # Dashboard UI logic
-│   │   ├── loading.tsx             # Dashboard loading skeleton
-│   │   └── page.tsx                # /dashboard route
-│   │
-│   ├── login/
-│   │   └── page.tsx                # /login route
-│   │
-│   ├── signup/                     # /signup route
-│   │   └── page.tsx
-│   │
-│   ├── globals.css                 # Global styles & Tailwind base
-│   ├── layout.tsx                  # Root layout (Header, Footer, Theme)
-│   └── page.tsx                    # Home page (/)
-│
-├── components/
-│   ├── ui/                         # shadcn/ui reusable components
-│   │   └── button.tsx
-│   │
-│   ├── cta.tsx                     # Call-to-action section
-│   ├── features.tsx                # Features section
-│   ├── footer.tsx                  # Site footer
-│   ├── header.tsx                  # Navbar / Header
-│   ├── hero.tsx                    # Hero section
-│   ├── pricing.tsx                 # Pricing section
-│   ├── testimonials.tsx            # Testimonials section
-│   ├── theme-provider.tsx          # Theme context provider
-│   └── theme-toggle.tsx            # Dark/Light toggle
-│
-├── hooks/                           # Custom React hooks
-├── lib/                             # Utilities & helpers
-├── public/                          # Static assets (images, icons)
-├── styles/                          # Additional styles
-│
-├── .gitignore
-├── components.json                 # shadcn/ui config
-├── next.config.mjs                 # Next.js configuration
-├── postcss.config.mjs              # PostCSS config
-├── tailwind.config.ts              # Tailwind configuration
-├── tsconfig.json                   # TypeScript config
-├── package.json
-└── pnpm-lock.yaml
+├── app/                  # Routing & Pages
+│   ├── dashboard/        # /dashboard - User dashboard & logic
+│   ├── login/ /signup/   # Authentication routes
+│   ├── layout.tsx        # Global Layout (Navbar, Footer, Theme)
+│   └── page.tsx          # Landing/Home Page (/)
+├── components/           # Reusable UI elements
+│   ├── ui/               # Base shadcn/ui components (Buttons, Inputs)
+│   └── ...               # Sections like Hero, Features, Header, Footer
+├── hooks/                # Custom React logic
+├── lib/                  # Helper functions & Utilities
+├── public/               # Static assets (Images, Icons)
+└── tailwind.config.ts    # Design system configuration
 ```
 
 ---
 
-## 🚀 Getting Started
+## 🏗 Getting Started
 
-### 1️⃣ Clone the Repository
+* **1. Installation**
 
-```bash
-git clone https://github.com/your-username/careerhub.git
+```
+git clone [https://github.com/mansi066/careerhub.git](https://github.com/mansi066/careerhub.git)
 cd careerhub
-```
-
-### 2️⃣ Install Dependencies
-
-```bash
 npm install
-# or
-pnpm install
 ```
+* **2. Development**
 
-### 3️⃣ Run the Development Server
-
-```bash
+```
 npm run dev
-# or
-pnpm dev
+Open http://localhost:3000 to see the site live in your browser.
 ```
-
-Open **[http://localhost:3000](http://localhost:3000)** in your browser.
-
----
-
-## 🧩 Core Pages & Components
-
-### 🏠 Home Page (`/`)
-
-* Hero section
-* Features overview
-* Testimonials
-* CTA
-
-### 🔐 Auth Pages
-
-* `/login`
-* `/signup`
-
-### 📊 Dashboard (`/dashboard`)
-
-* User-specific content
-* Loading skeleton for better UX
-
----
-
-## 📈 Future Enhancements
-
-* 🤖 AI-based career recommendations
-* 🔐 Authentication (NextAuth)
-* 📊 Personalized dashboards
-* 🔔 Notifications & alerts
-* 🌍 Multi-language support
 
 ---
 
 ## 🤝 Contributing
 
-Contributions are welcome!
+We are proud participants in **ECWOC**! We welcome and encourage first-time contributors, students, and open-source enthusiasts to help grow CareerHub.
 
-1. Fork the repository
-2. Create a new branch (`feature/your-feature`)
-3. Commit your changes
-4. Open a Pull Request
-5. Read the contributor.md guidelines
+### 🚀 Quick Start for Contributors:
+1. **Fork** the repository and clone it locally.
+2. **Branch:** Create a new branch for your feature: `git checkout -b feature/your-name`.
+3. **Commit:** Use descriptive messages (e.g., `feat: added AI search filter`).
+4. **Submit:** Open a Pull Request and mention **"Part of ECWOC"** in your description.
+
+> [!TIP]
+> **Detailed Guidelines:** For a full walkthrough on setting up your environment, our coding standards (TypeScript & Tailwind), and the PR process, please refer to our dedicated **[CONTRIBUTING.md](./CONTRIBUTING.md)** file.
 
 ---
 
+## ✨ Coding Standards (Brief)
+To keep our codebase clean and scalable, please ensure:
+* **Strict Typing:** No use of `any` in TypeScript.
+* **Component Pattern:** Follow **shadcn/ui** structures in `components/ui/`.
+* **Utility First:** Use **Tailwind CSS** only; no raw CSS files or inline styles.
 
-## ⭐ Support the Career Hub
+---
 
-If you find Career Hub helpful and valuable, please consider starring this repository 🌟
-Your support motivates us to keep improving the platform and adding more features for students and professionals.
+## 📈 Future Enhancements (Contribute Here!)
+Want to add a new feature? We are looking for help with:
 
+* **AI Recommendations:** Suggest jobs based on user profiles.
+* **NextAuth Integration:** Secure user authentication.
+* **Personalized Dashboards:** Advanced metrics for applicants.
+* **Multi-language:** Support for international users.
 
+---
 
+## ⭐ Support
+If you find CareerHub helpful, please consider starring this repository 🌟 It motivates us to keep building and improving!
 
-
-
+---
 
 ## 📄 License
-
-This project is licensed under the **MIT License**.
+This project is licensed under the **MIT License**. For more details, please see the **[LICENSE](./LICENSE)** file included in this repository.
 
 ---
 
+## *CareerHub — Find the right opportunity, faster.*
 
-### 🌟 CareerHub — Find the right opportunity, faster.
