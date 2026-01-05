@@ -32,7 +32,7 @@ const BrowsePage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [allOpportunities, setAllOpportunities] = useState<Opportunity[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  
+
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -41,13 +41,13 @@ const BrowsePage = () => {
         setShowLocationDropdown(false);
       }
     };
-    
+
     document.addEventListener('mousedown', handleClickOutside);
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [showLocationDropdown]);
-  
+
   useEffect(() => {
     // Initialize company data
     CompanyDataManager.initializeSampleData();
@@ -60,15 +60,15 @@ const BrowsePage = () => {
 
   const filteredOpportunities = allOpportunities.filter(opp => {
     const matchesFilter = filter === "all" || opp.type === filter;
-    const matchesSearch = opp.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                          opp.company.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          opp.description.toLowerCase().includes(searchQuery.toLowerCase());
-    
+    const matchesSearch = opp.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      opp.company.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      opp.description.toLowerCase().includes(searchQuery.toLowerCase());
+
     // Location filtering logic
     let matchesLocation = true;
     if (locationFilter !== "all") {
       const locationLower = opp.location.toLowerCase();
-      
+
       if (locationFilter === "remote") {
         matchesLocation = locationLower.includes("remote") || locationLower.includes("work from home") || locationLower.includes("wfh");
       } else if (locationFilter === "onsite") {
@@ -77,7 +77,7 @@ const BrowsePage = () => {
         matchesLocation = locationLower.includes("relocation") || locationLower.includes("willing to relocate") || locationLower.includes("relocation assistance");
       }
     }
-    
+
     return matchesFilter && matchesSearch && matchesLocation;
   });
 
@@ -104,11 +104,11 @@ const BrowsePage = () => {
       </main>
     );
   }
-  
+
   return (
     <main className="min-h-screen bg-background">
       <Header />
-      
+
       <div className="py-8 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           {/* Hero Section */}
@@ -141,29 +141,29 @@ const BrowsePage = () => {
                   />
                 </div>
                 <div className="flex gap-2">
-                  <Button 
-                    variant={filter === "all" ? "default" : "outline"} 
+                  <Button
+                    variant={filter === "all" ? "default" : "outline"}
                     onClick={() => setFilter("all")}
                     className={filter === "all" ? "bg-foreground text-background" : ""}
                   >
                     All
                   </Button>
-                  <Button 
-                    variant={filter === "job" ? "default" : "outline"} 
+                  <Button
+                    variant={filter === "job" ? "default" : "outline"}
                     onClick={() => setFilter("job")}
                     className={filter === "job" ? "bg-blue-600 text-white" : ""}
                   >
                     Jobs
                   </Button>
-                  <Button 
-                    variant={filter === "internship" ? "default" : "outline"} 
+                  <Button
+                    variant={filter === "internship" ? "default" : "outline"}
                     onClick={() => setFilter("internship")}
                     className={filter === "internship" ? "bg-green-600 text-white" : ""}
                   >
                     Internships
                   </Button>
-                  <Button 
-                    variant={filter === "scholarship" ? "default" : "outline"} 
+                  <Button
+                    variant={filter === "scholarship" ? "default" : "outline"}
                     onClick={() => setFilter("scholarship")}
                     className={filter === "scholarship" ? "bg-purple-600 text-white" : ""}
                   >
@@ -171,7 +171,7 @@ const BrowsePage = () => {
                   </Button>
                 </div>
                 <div className="relative">
-                  <Button 
+                  <Button
                     variant="outline"
                     className="flex items-center justify-between min-w-[120px]"
                     onClick={() => setShowLocationDropdown(!showLocationDropdown)}
@@ -188,7 +188,7 @@ const BrowsePage = () => {
                   </Button>
                   {showLocationDropdown && (
                     <div id="location-dropdown" className="absolute z-10 mt-1 w-full bg-background border border-foreground/20 rounded-md shadow-lg">
-                      <button 
+                      <button
                         className={`block w-full text-left px-4 py-2 hover:bg-foreground/10 ${locationFilter === "all" ? "bg-foreground/20" : ""}`}
                         onClick={() => {
                           setLocationFilter("all");
@@ -197,7 +197,7 @@ const BrowsePage = () => {
                       >
                         All Locations
                       </button>
-                      <button 
+                      <button
                         className={`block w-full text-left px-4 py-2 hover:bg-foreground/10 ${locationFilter === "remote" ? "bg-foreground/20" : ""}`}
                         onClick={() => {
                           setLocationFilter("remote");
@@ -206,7 +206,7 @@ const BrowsePage = () => {
                       >
                         Remote
                       </button>
-                      <button 
+                      <button
                         className={`block w-full text-left px-4 py-2 hover:bg-foreground/10 ${locationFilter === "onsite" ? "bg-foreground/20" : ""}`}
                         onClick={() => {
                           setLocationFilter("onsite");
@@ -215,7 +215,7 @@ const BrowsePage = () => {
                       >
                         On-Site
                       </button>
-                      <button 
+                      <button
                         className={`block w-full text-left px-4 py-2 hover:bg-foreground/10 ${locationFilter === "relocation" ? "bg-foreground/20" : ""}`}
                         onClick={() => {
                           setLocationFilter("relocation");
@@ -238,6 +238,20 @@ const BrowsePage = () => {
                 <Card key={opportunity.id} className="glassmorphic hover:scale-[1.02] transition-transform duration-300">
                   <CardHeader>
                     <div className="flex justify-between items-start">
+                      <div className="flex-1">
+                        <CardTitle className="text-xl">{opportunity.title}</CardTitle>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <BookmarkButton
+                          opportunity={opportunity}
+                          type={opportunity.type}
+                          variant="heart"
+                          size="sm"
+                        />
+                        <Badge className={getTypeColor(opportunity.type)}>
+                          {opportunity.type.charAt(0).toUpperCase() + opportunity.type.slice(1)}
+                        </Badge>
+                      </div>
                       <div className="flex-1">
                         <CardTitle className="text-xl">{opportunity.title}</CardTitle>
                       </div>
@@ -275,25 +289,25 @@ const BrowsePage = () => {
                         <MapPin className="w-4 h-4 mr-2" />
                         <span>{opportunity.location}</span>
                       </div>
-                      
+
                       {opportunity.salary && (
                         <div className="flex items-center text-muted-foreground">
                           <DollarSign className="w-4 h-4 mr-2" />
                           <span>{opportunity.salary}</span>
                         </div>
                       )}
-                      
+
                       {opportunity.deadline && (
                         <div className="flex items-center text-muted-foreground">
                           <Clock className="w-4 h-4 mr-2" />
                           <span>Deadline: {opportunity.deadline}</span>
                         </div>
                       )}
-                      
+
                       <p className="text-muted-foreground text-sm mt-2 line-clamp-2">
                         {opportunity.description}
                       </p>
-                      
+
                       <div className="flex flex-wrap gap-2 mt-4">
                         {opportunity.tags.map((tag, index) => (
                           <Badge key={index} variant="secondary" className="text-xs">
@@ -301,7 +315,7 @@ const BrowsePage = () => {
                           </Badge>
                         ))}
                       </div>
-                      
+
                       <Button className="w-full mt-4 glassmorphic-button-primary">
                         View Details
                       </Button>
@@ -310,7 +324,7 @@ const BrowsePage = () => {
                 </Card>
               ))}
             </div>
-            
+
             {filteredOpportunities.length === 0 && (
               <div className="text-center py-12">
                 <h3 className="text-xl font-semibold text-foreground mb-2">No opportunities found</h3>
@@ -320,7 +334,7 @@ const BrowsePage = () => {
           </section>
         </div>
       </div>
-      
+
       <Footer />
     </main>
   );
