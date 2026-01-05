@@ -4,10 +4,11 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Search, Briefcase, GraduationCap, Users, MapPin, Clock, DollarSign } from "lucide-react";
+import { Search, Briefcase, GraduationCap, Users, MapPin, Clock, DollarSign, Building } from "lucide-react";
 import Link from "next/link";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
+import { CompanyDataManager } from "@/lib/company-data";
 
 interface Opportunity {
   id: number;
@@ -28,6 +29,9 @@ const BrowsePage = () => {
   const [isLoading, setIsLoading] = useState(true);
   
   useEffect(() => {
+    // Initialize company data
+    CompanyDataManager.initializeSampleData();
+    
     // Get company posted jobs from localStorage
     const companyPostedJobs: Opportunity[] = [];
     const savedJobs = localStorage.getItem("postedJobs");
@@ -163,7 +167,21 @@ const BrowsePage = () => {
                         {opportunity.type.charAt(0).toUpperCase() + opportunity.type.slice(1)}
                       </Badge>
                     </div>
-                    <p className="font-semibold text-foreground">{opportunity.company}</p>
+                    <div className="flex items-center space-x-2">
+                      <p className="font-semibold text-foreground">{opportunity.company}</p>
+                      {/* Company Profile Link */}
+                      {(() => {
+                        const companies = CompanyDataManager.getCompanies();
+                        const company = companies.find(c => c.companyName === opportunity.company);
+                        return company ? (
+                          <Link href={`/company/${company.id}`}>
+                            <Button variant="ghost" size="sm" className="p-1 h-6 w-6">
+                              <Building className="w-3 h-3" />
+                            </Button>
+                          </Link>
+                        ) : null;
+                      })()}
+                    </div>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-4">
