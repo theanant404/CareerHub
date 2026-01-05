@@ -2,9 +2,11 @@
 
 import { useEffect, useState, useRef } from "react"
 import { useRouter } from "next/navigation"
-import { LogOut, Search, Briefcase, GraduationCap, Users, User, Settings, Home } from "lucide-react"
+import { LogOut, Search, Briefcase, GraduationCap, Users, User, Settings, Home, Heart } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
+import BookmarkCard from "@/components/bookmark-card"
+import { BookmarkManager, BookmarkedOpportunity } from "@/lib/bookmark-data"
 
 interface User {
   email: string
@@ -17,6 +19,7 @@ export default function DashboardContent() {
   const [user, setUser] = useState<User | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [showDropdown, setShowDropdown] = useState(false)
+  const [recentBookmarks, setRecentBookmarks] = useState<BookmarkedOpportunity[]>([])
   const dropdownRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -29,6 +32,10 @@ export default function DashboardContent() {
     try {
       const userData = JSON.parse(storedUser)
       setUser(userData)
+      
+      // Load recent bookmarks
+      const bookmarks = BookmarkManager.getRecentBookmarks(3)
+      setRecentBookmarks(bookmarks)
     } catch {
       router.push("/login")
     } finally {
@@ -173,6 +180,34 @@ export default function DashboardContent() {
               <Button className="glassmorphic-button-primary">Search</Button>
             </div>
           </div>
+
+          {/* Recent Bookmarks Section */}
+          {recentBookmarks.length > 0 && (
+            <div className="glassmorphic p-6 rounded-2xl border-foreground/10">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center space-x-2">
+                  <Heart className="w-5 h-5 text-red-500" />
+                  <h2 className="text-xl font-semibold">Recently Saved</h2>
+                </div>
+                <Link href="/bookmarks">
+                  <Button variant="outline" size="sm">
+                    View All
+                  </Button>
+                </Link>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {recentBookmarks.map((bookmark) => (
+                  <BookmarkCard
+                    key={bookmark.id}
+                    bookmark={bookmark}
+                    onRemove={(id) => setRecentBookmarks(prev => prev.filter(b => b.id !== id))}
+                    showNotes={false}
+                    compact={true}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </main>
