@@ -181,7 +181,6 @@ export default function SignupPage() {
   return (
     <>
       {/* Header */}
-      <Header />
 
       {/* Page Container with gradient background */}
       <div className="relative w-full min-h-[calc(100vh-4rem)] flex flex-col items-center justify-center bg-gradient-to-br from-background via-background to-primary/5 overflow-hidden">
@@ -522,7 +521,6 @@ export default function SignupPage() {
         </main>
 
         {/* Footer */}
-        <Footer />
       </div>
     </>
   )
