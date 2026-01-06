@@ -3,17 +3,18 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { 
-  Building, 
-  MapPin, 
-  Users, 
-  Star, 
+import {
+  Building,
+  MapPin,
+  Users,
+  Star,
   ExternalLink,
   Calendar,
   Briefcase
 } from "lucide-react";
 import Link from "next/link";
 import { CompanyProfile } from "@/lib/company-data";
+import BookmarkButton from "./bookmark-button";
 
 interface CompanyCardProps {
   company: CompanyProfile;
@@ -25,13 +26,12 @@ export default function CompanyCard({ company, showViewButton = true }: CompanyC
     return Array.from({ length: 5 }, (_, i) => (
       <Star
         key={i}
-        className={`w-4 h-4 ${
-          i < Math.floor(rating)
-            ? "fill-yellow-400 text-yellow-400"
-            : i < rating
+        className={`w-4 h-4 ${i < Math.floor(rating)
+          ? "fill-yellow-400 text-yellow-400"
+          : i < rating
             ? "fill-yellow-400/50 text-yellow-400"
             : "text-gray-300"
-        }`}
+          }`}
       />
     ));
   };
@@ -40,11 +40,11 @@ export default function CompanyCard({ company, showViewButton = true }: CompanyC
     <Card className="glassmorphic hover-card group transition-all duration-300 hover:shadow-lg">
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between">
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center space-x-3 flex-1">
             <div className="w-12 h-12 bg-gradient-to-br from-primary/20 to-primary/10 rounded-lg flex items-center justify-center">
               <Building className="w-6 h-6 text-primary" />
             </div>
-            <div>
+            <div className="flex-1">
               <CardTitle className="text-lg font-semibold group-hover:text-primary transition-colors">
                 {company.companyName}
               </CardTitle>
@@ -65,6 +65,12 @@ export default function CompanyCard({ company, showViewButton = true }: CompanyC
               </div>
             </div>
           </div>
+          <BookmarkButton
+            opportunity={company}
+            type="company"
+            variant="heart"
+            size="sm"
+          />
         </div>
       </CardHeader>
 
@@ -75,7 +81,7 @@ export default function CompanyCard({ company, showViewButton = true }: CompanyC
             <MapPin className="w-4 h-4" />
             <span>{company.location}</span>
           </div>
-          
+
           {company.employeeCount && (
             <div className="flex items-center space-x-2 text-sm text-muted-foreground">
               <Users className="w-4 h-4" />

@@ -6,6 +6,8 @@ import Script from "next/script"
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import { Toaster } from "react-hot-toast"
+import { AuthSessionProvider } from "@/provider/auth-provider"
+import Footer from "@/components/footer"
 
 const _geist = Geist({ subsets: ["latin"] })
 const _geistMono = Geist_Mono({ subsets: ["latin"] })
@@ -42,8 +44,11 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={`font-sans antialiased`}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          {children}
-          <Toaster position="top-right" reverseOrder={false} />
+          <AuthSessionProvider>
+            {children}
+          </AuthSessionProvider>
+
+          <Toaster />
           <Analytics />
         </ThemeProvider>
         <Script
