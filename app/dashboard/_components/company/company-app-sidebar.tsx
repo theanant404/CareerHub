@@ -71,9 +71,8 @@ const data = {
             items: [
                 { title: "View Profile", url: "/dashboard/company/profile" },
                 { title: "Basic Info", url: "/dashboard/company/profile/basic-info" },
-                { title: "Address", url: "/dashboard/company/profile/address" },
                 { title: "Social Links", url: "/dashboard/company/profile/social-links" },
-                { title: "Legal Information", url: "/dashboard/company/profile/legal-information" },
+                { title: "Technical & Operational Stack", url: "/dashboard/company/profile/technical-operational-stack" },
             ],
         }, {
             title: "Settings",
