@@ -23,6 +23,7 @@ import { NavProjects } from "../nav-projects"
 import { NavMain } from "../nav-main"
 import { SideBarLogo } from "../sidebar-logo"
 import { useSession } from "next-auth/react"
+import { title } from "process"
 
 // Company-focused navigation data
 const data = {
@@ -73,6 +74,7 @@ const data = {
                 { title: "Basic Info", url: "/dashboard/company/profile/basic-info" },
                 { title: "Social Links", url: "/dashboard/company/profile/social-links" },
                 { title: "Technical & Operational Stack", url: "/dashboard/company/profile/technical-operational-stack" },
+                { title: "Culture & Working Style", url: "/dashboard/company/profile/culture-and-working-style" },
             ],
         }, {
             title: "Settings",
