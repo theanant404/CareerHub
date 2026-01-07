@@ -17,8 +17,7 @@ const UserSchema: Schema<User> = new mongoose.Schema({
     password: { type: String },
     isVarified: { type: Boolean, default: false, required: true },
     image: { type: String },
-    role: { type: String, enum: ['user', 'company', 'startup'], default: 'user' },
-
+    role: { type: String, enum: ['user', 'company'], default: undefined },
 });
 
 const UserModel = mongoose.models.User as mongoose.Model<User> || mongoose.model<User>("User", UserSchema);

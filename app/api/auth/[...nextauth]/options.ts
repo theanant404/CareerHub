@@ -110,13 +110,14 @@ export const authOptions: NextAuthOptions = {
                 return true;
             }
 
-            // New Google user -> create record
+            // New Google user -> create record (without role, will trigger role selection)
             await UserModel.create({
                 email,
                 name: user.name || "Anonymous",
                 image: user.image || "",
                 username: buildUsername(email),
                 isVarified: Boolean(profile?.email_verified ?? true),
+                role: undefined, // Don't set role - let user choose
             });
 
             return true;
@@ -130,6 +131,7 @@ export const authOptions: NextAuthOptions = {
                 token.name = user.name ?? token.name;
                 token.email = user.email ?? token.email;
                 token.image = (user as any).image ?? token.image;
+                token.role = (user as any).role ?? token.role;
             }
             return token;
         },
@@ -147,6 +149,7 @@ export const authOptions: NextAuthOptions = {
             mutableUser.username = token.username || userData?.username;
             mutableUser.name = token.name || userData?.name;
             mutableUser.image = token.image || userData?.image || "";
+            mutableUser.role = token.role || userData?.role || undefined;
 
             return session;
         },
