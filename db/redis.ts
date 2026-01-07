@@ -19,10 +19,21 @@ const redisClient = createClient({
     },
 });
 
-redisClient.on("error", (err) => console.error("Redis Error:", err));
+redisClient.on("error", (err) => {
+    // Only log in development, suppress in production
+    if (process.env.NODE_ENV === 'development') {
+        console.error("Redis Error:", err);
+    }
+});
 
 (async () => {
     try {
+        // Skip Redis connection in production if not configured
+        if (process.env.NODE_ENV === 'production' && !process.env.REDIS_HOST) {
+            console.log("Redis skipped in production (not configured)");
+            return;
+        }
+        
         if (!redisClient.isOpen) {
             await redisClient.connect();
             console.log("Connected to Redis");
@@ -30,7 +41,9 @@ redisClient.on("error", (err) => console.error("Redis Error:", err));
             console.log("Redis already connected");
         }
     } catch (err) {
-        console.error("Redis connection error:", err);
+        if (process.env.NODE_ENV === 'development') {
+            console.error("Redis connection error:", err);
+        }
     }
 })();
 
