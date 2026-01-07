@@ -12,7 +12,7 @@ import {
     SidebarProvider,
     SidebarTrigger,
 } from "@/components/ui/sidebar"
-import { AppSidebar } from "../_components/company/company-app-sidebar"
+import { AppSidebar } from "../_components/student/student-app-sidebar"
 
 export default function Page({ children }: { children: React.ReactNode }) {
     return (
