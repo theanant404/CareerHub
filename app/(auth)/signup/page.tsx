@@ -7,11 +7,8 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { Eye, EyeOff } from "lucide-react"
 import { signIn } from "next-auth/react"
-import { signupAction } from "../action"
+import { signupAction, verifyOtpAction, resendOtpAction } from "../action"
 
-// ✅ Existing Components
-import Header from "@/components/header"
-import Footer from "@/components/footer"
 
 /**
  * SignupPage component
@@ -114,18 +111,7 @@ export default function SignupPage() {
     setIsLoading(true)
 
     try {
-      const response = await fetch("/api/auth/verify-otp", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: userEmail,
-          otp: otp,
-        }),
-      })
-
-      const result = await response.json()
+      const result = await verifyOtpAction(userEmail, otp)
 
       if (result.success) {
         setSuccess("Email verified successfully! Redirecting to login...")
@@ -133,7 +119,7 @@ export default function SignupPage() {
           router.push("/login")
         }, 2000)
       } else {
-        setError(result.message || "Invalid verification code")
+        setError((result as any).message || (result as any).error || "Invalid verification code")
       }
     } catch (err) {
       setError("An unexpected error occurred. Please try again.")
@@ -150,17 +136,7 @@ export default function SignupPage() {
     setIsLoading(true)
 
     try {
-      const response = await fetch("/api/auth/resend-otp", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: userEmail,
-        }),
-      })
-
-      const result = await response.json()
+      const result = await resendOtpAction(userEmail)
 
       if (result.success) {
         setSuccess("Verification code resent successfully!")
@@ -168,7 +144,7 @@ export default function SignupPage() {
         setCanResend(false)
         setOtp("")
       } else {
-        setError(result.message || "Failed to resend verification code")
+        setError((result as any).message || (result as any).error || "Failed to resend verification code")
       }
     } catch (err) {
       setError("An unexpected error occurred. Please try again.")

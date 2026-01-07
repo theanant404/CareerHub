@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { Eye, EyeOff } from "lucide-react"
-import { signIn } from "next-auth/react"
+import { signIn, getSession } from "next-auth/react"
 
 // ✅ import existing components
 import Header from "@/components/header"
@@ -47,9 +47,24 @@ export default function LoginPage() {
         setError(result.error || "Invalid email or password")
       } else if (result?.ok) {
         setSuccess("Login successful! Redirecting...")
-        setTimeout(() => {
-          router.push("/dashboard")
-        }, 1500)
+
+        // Wait a moment for session to update, then check role
+        setTimeout(async () => {
+          const session = await getSession()
+          const userRole = (session?.user as any)?.role
+
+          if (!userRole || userRole === undefined) {
+            // No role assigned yet - redirect to role selection
+            router.push("/select-role")
+          } else {
+            // Role exists - redirect to appropriate dashboard
+            if (userRole === "company") {
+              router.push("/dashboard/company")
+            } else {
+              router.push("/dashboard")
+            }
+          }
+        }, 500)
       }
     } catch (err) {
       setError("Login failed. Please try again.")
@@ -62,7 +77,11 @@ export default function LoginPage() {
   const handleGoogleSignIn = async () => {
     setIsLoading(true)
     try {
-      await signIn("google", { redirect: true, callbackUrl: "/dashboard" })
+      // Use a callback URL to a role-check page
+      await signIn("google", {
+        redirect: true,
+        callbackUrl: "/check-role"
+      })
     } catch (err) {
       setError("Google sign in failed. Please try again.")
       console.error("Google signin error:", err)
