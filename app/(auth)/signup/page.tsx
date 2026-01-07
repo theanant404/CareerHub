@@ -7,7 +7,8 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { Eye, EyeOff } from "lucide-react"
 import { signIn } from "next-auth/react"
-import { signupAction } from "../action"
+import { signupAction } from "../action";
+import toast from "react-hot-toast";
 
 // ✅ Existing Components
 import Header from "@/components/header"
@@ -94,7 +95,14 @@ export default function SignupPage() {
         setUserEmail(formData.email)
         setShowOtpForm(true)
         setResendCountdown(60)
-        setCanResend(false)
+        setCanResend(false);
+        // Show toast
+      toast.success("Complete your profile to get the best job matches!", {
+        duration: 10000, // 8 seconds
+        position: "top-right",
+      })
+      // Redirect to profile page instead of dashboard
+      router.push("/profile/edit");
       } else {
         setError(result.error || "Failed to create account")
       }
