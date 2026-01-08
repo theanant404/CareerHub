@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { ThemeToggle } from "./theme-toggle";
 import { usePathname } from "next/navigation";
-import { useSession } from "next-auth/react";
 import {
   Sheet,
   SheetContent,
@@ -206,5 +205,44 @@ export default function Header() {
         </div>
       </nav>
     </header>
+    <>
+      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur">
+        <div className="container mx-auto flex h-16 items-center justify-between px-4">
+          <Link href="/" className="flex items-center gap-2 font-bold">
+            <div className="h-8 w-8 rounded-lg bg-primary text-primary-foreground flex items-center justify-center">
+              C
+            </div>
+            CareerHub
+          </Link>
+
+          <nav className="hidden md:flex items-center gap-1">
+            {LINKS.map((l) => renderLink(l))}
+          </nav>
+
+          <div className="hidden md:flex items-center gap-2">
+            <ThemeToggle />
+            {renderCTA()}
+          </div>
+
+          <button
+            className="md:hidden p-2"
+            onClick={() => setIsOpen(!isOpen)}
+          >
+            {isOpen ? <X /> : <Menu />}
+          </button>
+        </div>
+      </header>
+
+      {isOpen && (
+        <div className="fixed inset-0 z-40 bg-black/30 md:hidden">
+          <div className="fixed right-0 top-0 h-full w-80 bg-background p-4">
+            <div className="space-y-2">
+              {LINKS.map((l) => renderLink(l, true))}
+            </div>
+            <div className="mt-6">{renderCTA(true)}</div>
+          </div>
+        </div>
+      )}
+    </>
   );
 }
