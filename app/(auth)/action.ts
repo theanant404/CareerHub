@@ -1,51 +1,36 @@
 "use server"
+import type { SignupFormData } from "@/lib/validations/auth"
 
-import { z } from "zod"
-import { signupSchema, type SignupFormData } from "@/lib/validations/auth"
+const baseUrl = process.env.NEXTAUTH_URL || process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"
 
-export async function signupAction(data: SignupFormData) {
+async function postJson(path: string, body: unknown) {
     try {
-        // Validate with Zod
-        const validatedData = signupSchema.parse(data)
-
-        // Call the register API endpoint
-        const response = await fetch(`${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/api/auth/register`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                name: validatedData.name,
-                email: validatedData.email,
-                password: validatedData.password,
-            }),
+        const res = await fetch(`${baseUrl}${path}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body),
+            cache: "no-store",
         })
-
-        const result = await response.json()
-
-        if (!response.ok) {
-            return {
-                success: false,
-                error: result.message || "Failed to create account",
-            }
-        }
-
-        return {
-            success: true,
-            message: result.message || "Account created successfully! Please check your email to verify your account.",
-        }
+        return await res.json()
     } catch (error) {
-        if (error instanceof z.ZodError) {
-            return {
-                success: false,
-                error: error.errors[0].message,
-            }
-        }
-
-        console.error("Signup error:", error)
-        return {
-            success: false,
-            error: "Failed to create account. Please try again.",
-        }
+        console.error(`API call ${path} failed:`, error)
+        return { success: false, error: "API request failed" }
     }
 }
+
+export async function signupAction(data: SignupFormData) {
+    return await postJson("/api/auth/register", data)
+}
+
+export async function verifyOtpAction(email: string, otp: string) {
+    return await postJson("/api/auth/verify-otp", { email, otp })
+}
+
+export async function resendOtpAction(email: string) {
+    return await postJson("/api/auth/resend-otp", { email })
+}
+
+export async function updateUserRoleAction(email: string, role: "user" | "company") {
+    return await postJson("/api/auth/update-role", { email, role })
+}
+

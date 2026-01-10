@@ -1,56 +1,31 @@
-import dbConnect from "@/db/mongoDb";
-import UserModel from "@/models/User.Model";
-import { sendEmail } from "@/lib/email/send.email";
-import { createAndStoreOTP } from "@/lib/services/otp";
+import { NextResponse } from "next/server"
+import dbConnect from "@/db/mongoDb"
+import UserModel from "@/models/User.Model"
+import { createAndStoreOTP } from "@/lib/services/otp"
+import { sendEmail } from "@/lib/email/send.email"
 
-export async function POST(request: Request) {
-    await dbConnect();
-
+export async function POST(req: Request) {
     try {
-        const { email } = await request.json();
-
-        // Input validation
+        const { email } = await req.json()
         if (!email) {
-            return Response.json(
-                { success: false, message: "Email is required" },
-                { status: 400 }
-            );
+            return NextResponse.json({ success: false, message: "Email is required" }, { status: 400 })
         }
 
-        // Check if user exists
-        const user = await UserModel.findOne({ email });
-
+        await dbConnect()
+        const user = await UserModel.findOne({ email })
         if (!user) {
-            return Response.json(
-                { success: false, message: "User not found" },
-                { status: 404 }
-            );
+            return NextResponse.json({ success: false, message: "User not found" }, { status: 404 })
         }
-
         if (user.isVarified) {
-            return Response.json(
-                { success: false, message: "Email already verified" },
-                { status: 400 }
-            );
+            return NextResponse.json({ success: false, message: "Email already verified" }, { status: 400 })
         }
 
-        // Generate new verification code
-        const verifyCode = Math.floor(100000 + Math.random() * 900000).toString();
-
-        // Store OTP in Redis (15 minutes expiry)
-        const setOtp = await createAndStoreOTP(email, Number(verifyCode), 6, 15 * 60);
-
+        const verifyCode = Math.floor(100000 + Math.random() * 900000).toString()
+        const setOtp = await createAndStoreOTP(email, Number(verifyCode), 6, 15 * 60)
         if (!setOtp) {
-            return Response.json(
-                {
-                    success: false,
-                    message: "Failed to generate verification code. Please try again."
-                },
-                { status: 500 }
-            );
+            return NextResponse.json({ success: false, message: "Failed to generate verification code. Please try again." }, { status: 500 })
         }
 
-        // Send verification email
         const emailResult = await sendEmail({
             to: email,
             subject: "Verify your CareerHub Account",
@@ -68,32 +43,16 @@ export async function POST(request: Request) {
                     <p>Best regards,<br>CareerHub Team</p>
                 </div>
             `,
-        });
+        })
 
         if (!emailResult.success) {
-            console.error("Failed to send verification email:", emailResult.error);
-            return Response.json(
-                {
-                    success: false,
-                    message: "Failed to send verification email. Please try again."
-                },
-                { status: 500 }
-            );
+            console.error("Failed to send verification email:", emailResult.error)
+            return NextResponse.json({ success: false, message: "Failed to send verification email. Please try again." }, { status: 500 })
         }
 
-        return Response.json(
-            {
-                success: true,
-                message: "Verification code resent successfully"
-            },
-            { status: 200 }
-        );
-
+        return NextResponse.json({ success: true, message: "Verification code resent successfully" })
     } catch (error) {
-        console.error("Error resending OTP:", error);
-        return Response.json(
-            { success: false, message: "Failed to resend verification code. Please try again." },
-            { status: 500 }
-        );
+        console.error("Error resending OTP:", error)
+        return NextResponse.json({ success: false, message: "Failed to resend verification code. Please try again." }, { status: 500 })
     }
 }

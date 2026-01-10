@@ -10,9 +10,6 @@ import { signIn } from "next-auth/react"
 import { signupAction } from "../action";
 import { toast } from "@/hooks/use-toast";
 
-// ✅ Existing Components
-import Header from "@/components/header"
-import Footer from "@/components/footer"
 
 /**
  * SignupPage component
@@ -44,7 +41,7 @@ export default function SignupPage() {
   const [resendCountdown, setResendCountdown] = useState(60)
   const [canResend, setCanResend] = useState(false)
 
-  // Countdown timer for resend button
+  // Countdown timer for resend button (runs every second while visible)
   useEffect(() => {
     if (showOtpForm && resendCountdown > 0) {
       const timer = setTimeout(() => {
@@ -55,6 +52,43 @@ export default function SignupPage() {
       setCanResend(true)
     }
   }, [showOtpForm, resendCountdown])
+
+  // When OTP form is shown, check session once and route based on role
+  useEffect(() => {
+    if (!showOtpForm) return
+
+    let mounted = true
+
+    const checkRoleAndRedirect = async () => {
+      // small delay to allow session establishment
+      await new Promise((r) => setTimeout(r, 500))
+      if (!mounted) return
+      try {
+        const session = await getSession()
+        const userRole = (session?.user as any)?.role
+
+        if (!userRole) {
+          router.push("/select-role")
+        } else if (userRole === "company") {
+          router.push("/dashboard/company")
+        }
+        else if (userRole === "user") {
+          router.push("/dashboard")
+        }
+        else {
+          router.push("/")
+        }
+      } catch (err) {
+        // ignore errors here; user may not be signed in yet
+      }
+    }
+
+    checkRoleAndRedirect()
+
+    return () => {
+      mounted = false
+    }
+  }, [showOtpForm, router])
 
   // Handle input changes
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -71,7 +105,7 @@ export default function SignupPage() {
   const handleGoogleSignIn = async () => {
     try {
       setIsLoading(true)
-      await signIn("google", { callbackUrl: "/dashboard" })
+      await signIn("google", { callbackUrl: "/check-role" })
     } catch (err) {
       setError("Failed to sign in with Google")
       console.error("Google sign in error:", err)
@@ -123,18 +157,7 @@ export default function SignupPage() {
     setIsLoading(true)
 
     try {
-      const response = await fetch("/api/auth/verify-otp", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: userEmail,
-          otp: otp,
-        }),
-      })
-
-      const result = await response.json()
+      const result = await verifyOtpAction(userEmail, otp)
 
       if (result.success) {
         setSuccess("Email verified successfully! Redirecting to login...")
@@ -142,7 +165,7 @@ export default function SignupPage() {
           router.push("/login")
         }, 2000)
       } else {
-        setError(result.message || "Invalid verification code")
+        setError((result as any).message || (result as any).error || "Invalid verification code")
       }
     } catch (err) {
       setError("An unexpected error occurred. Please try again.")
@@ -159,17 +182,7 @@ export default function SignupPage() {
     setIsLoading(true)
 
     try {
-      const response = await fetch("/api/auth/resend-otp", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: userEmail,
-        }),
-      })
-
-      const result = await response.json()
+      const result = await resendOtpAction(userEmail)
 
       if (result.success) {
         setSuccess("Verification code resent successfully!")
@@ -177,7 +190,7 @@ export default function SignupPage() {
         setCanResend(false)
         setOtp("")
       } else {
-        setError(result.message || "Failed to resend verification code")
+        setError((result as any).message || (result as any).error || "Failed to resend verification code")
       }
     } catch (err) {
       setError("An unexpected error occurred. Please try again.")

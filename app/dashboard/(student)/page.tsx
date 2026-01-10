@@ -1,11 +1,11 @@
 "use client"
 
 import { Suspense } from "react"
-import DashboardContent from "./_components/dashboard-content"
 import { Loader } from "lucide-react"
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { useEffect } from "react"
+import DashboardContent from "../_components/dashboard-content"
 
 export default function DashboardPage() {
   const { data: session, status } = useSession()
@@ -16,7 +16,15 @@ export default function DashboardPage() {
     if (status === "unauthenticated") {
       router.push("/login")
     }
-  }, [status, router])
+
+    // Redirect company users to company dashboard
+    if (session?.user) {
+      const user = session.user as any
+      if (user.role === "company") {
+        router.push("/dashboard/company")
+      }
+    }
+  }, [status, router, session])
 
   // Show loading state while checking authentication
   if (status === "loading") {
@@ -34,6 +42,12 @@ export default function DashboardPage() {
 
   // Don't render dashboard if not authenticated
   if (status === "unauthenticated" || !session) {
+    return null
+  }
+
+  // Don't render if user is a company (they should be redirected)
+  const user = session.user as any
+  if (user?.role === "company") {
     return null
   }
 
