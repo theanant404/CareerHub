@@ -1,7 +1,5 @@
-"use client"
+"use client";
 
-import Header from "@/components/header"
-import Footer from "@/components/footer"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -56,7 +54,6 @@ const achievements = [
 export default function LeaderboardPage() {
   return (
     <main className="bg-background min-h-screen">
-      <Header />
 
       {/* Hero Section */}
       <section className="py-20 px-4">
