@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Menu, Briefcase, Building2, Bookmark, GraduationCap, Award, CreditCard, Sparkles, X } from "lucide-react";
+import { Menu, Briefcase, Building2, Bookmark, GraduationCap, Award, CreditCard, Sparkles, X, FileText, FileUser, Mic } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { ThemeToggle } from "./theme-toggle";
@@ -17,6 +17,12 @@ import {
 } from "@/components/ui/sheet";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils"; // Ensure you have this utility from Shadcn
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"; // Import dropdown components
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
@@ -38,6 +44,12 @@ export default function Header() {
     { name: "Assessments", href: "/assessments", icon: GraduationCap },
     { name: "Success", hash: "testimonials", icon: Award },
     { name: "Pricing", hash: "pricing", icon: CreditCard },
+  ] as const;
+
+  const RESOURCES_LINKS = [
+    { name: "Career Blog", href: "/career-blog", icon: FileText },
+    { name: "Resume Tips", href: "/resume-tips", icon: FileUser },
+    { name: "Interview Prep", href: "/interview-prep", icon: Mic },
   ] as const;
 
   const handleSectionClick = (hash: string) => {
@@ -140,6 +152,27 @@ export default function Header() {
               </button>
             );
           })}
+          {/* Resources Dropdown */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className="flex items-center gap-2 px-4 py-1.5 text-sm font-medium text-muted-foreground hover:text-foreground transition-all rounded-full">
+                Resources
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-56">
+              {RESOURCES_LINKS.map((resource) => {
+                const Icon = resource.icon;
+                return (
+                  <DropdownMenuItem key={resource.name} asChild>
+                    <Link href={resource.href} className="cursor-pointer">
+                      <Icon className="mr-2 h-4 w-4" />
+                      {resource.name}
+                    </Link>
+                  </DropdownMenuItem>
+                );
+              })}
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
 
         {/* Right Actions */}
@@ -196,6 +229,23 @@ export default function Header() {
                       >
                         <Icon className="h-5 w-5" />
                         <span className="font-medium">{link.name}</span>
+                      </Link>
+                    );
+                  })}
+                  <p className="px-2 text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60 mt-4 mb-2">
+                    Resources
+                  </p>
+                  {RESOURCES_LINKS.map((resource) => {
+                    const Icon = resource.icon;
+                    return (
+                      <Link
+                        key={resource.name}
+                        href={resource.href}
+                        onClick={() => setIsOpen(false)}
+                        className="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-muted transition-colors"
+                      >
+                        <Icon className="h-5 w-5" />
+                        <span className="font-medium">{resource.name}</span>
                       </Link>
                     );
                   })}
