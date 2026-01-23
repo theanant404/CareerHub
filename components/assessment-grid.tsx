@@ -5,7 +5,11 @@ import { useRouter } from "next/navigation"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Clock, Users, Award, Code, Database, Cloud, Brain, Wrench } from "lucide-react"
+import { 
+  Clock, Users, Award, Code, Database, Cloud, Brain, Wrench, 
+  ShieldCheck, Smartphone, Binary, ListChecks, Palette, Cpu, 
+  GitBranch, Box, Terminal, Zap 
+} from "lucide-react"
 
 // Assessment Data Array
 const assessments = [
@@ -68,6 +72,127 @@ const assessments = [
     participants: "4.2K", 
     passRate: "45%",
     skills: ["Frontend", "Backend", "Database", "Deployment"]
+  },
+  // --- 10 NEW ASSESSMENTS ADDED BELOW ---
+  {
+    id: "cybersecurity",
+    title: "Cybersecurity",
+    description: "Network security, ethical hacking, and OWASP",
+    icon: ShieldCheck,
+    duration: "35 min",
+    questions: 25,
+    difficulty: "Advanced",
+    participants: "6.7K",
+    passRate: "55%",
+    skills: ["Cryptography", "Network Security", "Penetration Testing"]
+  },
+  {
+    id: "mobile",
+    title: "Mobile Development",
+    description: "Native and Cross-platform mobile app development",
+    icon: Smartphone,
+    duration: "30 min",
+    questions: 25,
+    difficulty: "Intermediate",
+    participants: "7.3K",
+    passRate: "70%",
+    skills: ["React Native", "Swift/Kotlin", "Flutter", "Mobile UI"]
+  },
+  {
+    id: "typescript",
+    title: "TypeScript Mastery",
+    description: "Static typing, generics, and advanced TS patterns",
+    icon: Binary,
+    duration: "25 min",
+    questions: 20,
+    difficulty: "Intermediate",
+    participants: "10.1K",
+    passRate: "82%",
+    skills: ["Type Safety", "Generics", "Interfaces", "Decorators"]
+  },
+  {
+    id: "cloud",
+    title: "Cloud Infrastructure",
+    description: "AWS, Azure, and GCP architecture and services",
+    icon: Zap,
+    duration: "40 min",
+    questions: 30,
+    difficulty: "Advanced",
+    participants: "4.9K",
+    passRate: "60%",
+    skills: ["SaaS/PaaS", "S3/EC2", "IAM", "Serverless"]
+  },
+  {
+    id: "testing",
+    title: "Software Testing",
+    description: "Unit, Integration, and E2E testing strategies",
+    icon: ListChecks,
+    duration: "30 min",
+    questions: 25,
+    difficulty: "Intermediate",
+    participants: "5.2K",
+    passRate: "74%",
+    skills: ["Jest", "Cypress", "TDD", "QA Automation"]
+  },
+  {
+    id: "uiux",
+    title: "UI/UX Design",
+    description: "User research, wireframing, and design principles",
+    icon: Palette,
+    duration: "30 min",
+    questions: 20,
+    difficulty: "Beginner",
+    participants: "8.8K",
+    passRate: "85%",
+    skills: ["Figma", "User Flow", "Accessibility", "Color Theory"]
+  },
+  {
+    id: "ai",
+    title: "Artificial Intelligence",
+    description: "Neural networks, NLP, and LLM fundamentals",
+    icon: Cpu,
+    duration: "45 min",
+    questions: 30,
+    difficulty: "Expert",
+    participants: "11.2K",
+    passRate: "48%",
+    skills: ["Deep Learning", "NLP", "TensorFlow", "PyTorch"]
+  },
+  {
+    id: "git",
+    title: "Version Control (Git)",
+    description: "Branching strategies, merging, and collaboration",
+    icon: GitBranch,
+    duration: "20 min",
+    questions: 15,
+    difficulty: "Beginner",
+    participants: "15.4K",
+    passRate: "90%",
+    skills: ["Git Flow", "Rebase", "Merge Conflicts", "GitHub"]
+  },
+  {
+    id: "blockchain",
+    title: "Blockchain Tech",
+    description: "Decentralized ledgers, Smart Contracts, and DeFi",
+    icon: Box,
+    duration: "35 min",
+    questions: 25,
+    difficulty: "Expert",
+    participants: "3.1K",
+    passRate: "52%",
+    skills: ["Solidity", "Ethereum", "Web3", "Consensus"]
+  },
+  {
+    id: "linux",
+    title: "Linux Administration",
+    description: "CLI mastery, shell scripting, and sysadmin tasks",
+    icon: Terminal,
+    duration: "30 min",
+    questions: 25,
+    difficulty: "Intermediate",
+    participants: "6.4K",
+    passRate: "68%",
+    skills: ["Bash", "Permissions", "SSH", "Cron Jobs"]
   }
 ]
 
@@ -91,7 +216,6 @@ export default function AssessmentGrid() {
   const handleStartAssessment = (id: string) => {
     if (!isLoggedIn) {
       // Redirect to login/register page
-      // We pass the redirect path as a query parameter so the user returns here after auth
       router.push(`/login?redirect=/assessments/${id}`)
     } else {
       // Direct access if logged in
