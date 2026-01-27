@@ -9,8 +9,8 @@
  * - `AnalyzeResumeAgainstJobDescriptionOutput`: The TypeScript type definition for the output of the `analyzeResumeAgainstJobDescription` function.
  */
 
-import {ai} from '@/ai/genkit';
-import {z} from 'genkit';
+import { ai } from '@/ai/genkit';
+import { z } from 'genkit';
 
 const AnalyzeResumeAgainstJobDescriptionInputSchema = z.object({
   resumeFileUri: z
@@ -77,16 +77,25 @@ const analyzeResumeAgainstJobDescriptionPrompt = ai.definePrompt({
   output: {
     schema: AnalyzeResumeAgainstJobDescriptionOutputSchema,
   },
-  prompt: `You are an expert hiring manager and resume analyst. Analyze the provided resume against the job description.
+  prompt: `You are an expert hiring manager and ATS resume analyst. Analyze the resume against the job description.
 
-Provide a comprehensive analysis by returning the following structured data:
-- \`matchScore\`: An integer score from 0 to 100 indicating the resume's compatibility with the job description. 100 is a perfect match.
-- \`summary\`: A concise, one or two-sentence summary of the analysis.
-- \`strengths\`: A list of the top 3-5 strengths of the resume that directly relate to the job requirements.
-- \`weaknesses\`: A list of the top 3-5 weaknesses or areas where the resume falls short of the job requirements.
+Use only evidence from the resume and the job description. Do not invent details. If evidence is missing, note it as missing. Prefer concise, actionable insights.
+
+Scoring guidance:
+- \`matchScore\` is 0–100 based on alignment across skills, experience level, domain fit, and keywords.
+- 90–100: strong alignment with most critical requirements.
+- 70–89: good alignment with some gaps.
+- 50–69: partial alignment with notable gaps.
+- <50: weak alignment with major gaps.
+
+Output must strictly follow the schema:
+- \`matchScore\`: integer 0–100.
+- \`summary\`: 1–2 sentences; mention overall fit and top gap.
+- \`strengths\`: 3–5 bullet-style phrases that map directly to job requirements.
+- \`weaknesses\`: 3–5 bullet-style phrases describing missing skills/experience or unclear evidence.
 - \`keywordAnalysis\`:
-    - \`mentionedKeywords\`: A list of important keywords and skills from the job description that were found in the resume.
-    - \`missingKeywords\`: A list of critical keywords and skills from the job description that are missing from the resume.
+  - \`mentionedKeywords\`: 6–12 key terms found in the resume that appear (or closely match) the job description.
+  - \`missingKeywords\`: 6–12 critical terms from the job description that are absent or weakly evidenced in the resume.
 
 Resume File:
 {{media url=resumeFileUri}}
@@ -102,7 +111,7 @@ const analyzeResumeAgainstJobDescriptionFlow = ai.defineFlow(
     outputSchema: AnalyzeResumeAgainstJobDescriptionOutputSchema,
   },
   async input => {
-    const {output} = await analyzeResumeAgainstJobDescriptionPrompt(input);
+    const { output } = await analyzeResumeAgainstJobDescriptionPrompt(input);
     return output!;
   }
 );
