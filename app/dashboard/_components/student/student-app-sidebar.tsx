@@ -6,6 +6,7 @@ import {
     Briefcase,
     GraduationCap,
     LayoutDashboard,
+    Newspaper,
     Settings,
     Trophy,
     User,
@@ -65,9 +66,9 @@ const navMain = [
 
 const quickLinks = [
     {
-        name: "Saved Jobs",
-        url: "/bookmarks",
-        icon: Bookmark,
+        name: "Analyse CV",
+        url: "/dashboard/cv",
+        icon: Newspaper,
     },
     {
         name: "Applications",
