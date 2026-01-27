@@ -2,7 +2,6 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
@@ -14,8 +13,6 @@ import {
 } from '@/components/ui/tabs';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import Link from 'next/link';
 import {
   Lightbulb,
   Sparkles,
@@ -26,12 +23,10 @@ import {
   BriefcaseBusiness,
   Brain,
   Palette,
-  AlignLeft,
-  Wand2
+  AlignLeft
 } from 'lucide-react';
 import type { AnalyzeResumeAgainstJobDescriptionOutput } from '@/ai/flows/analyze-resume-against-job-description';
 import type { GenerateResumeImprovementTipsOutput } from '@/ai/flows/generate-resume-improvement-tips';
-import { cn } from '@/lib/utils';
 
 type AnalysisResultProps = {
   result: {
@@ -54,6 +49,16 @@ const getTipIcon = (area: string) => {
 
 export function AnalysisResults({ result, jobDescription, resumeFileUri }: AnalysisResultProps) {
   const { analysis, tips } = result;
+
+  const groupedTips = tips.improvementTips.reduce<Record<string, typeof tips.improvementTips>>(
+    (acc, tip) => {
+      const key = tip.area?.trim() || 'General';
+      if (!acc[key]) acc[key] = [];
+      acc[key].push(tip);
+      return acc;
+    },
+    {}
+  );
 
   const handleCreateUpdatedCV = () => {
     try {
@@ -104,6 +109,24 @@ export function AnalysisResults({ result, jobDescription, resumeFileUri }: Analy
                 <CardDescription className="pt-4 !text-base text-center">{analysis.summary}</CardDescription>
               </CardHeader>
               <CardContent className="space-y-8 pt-2">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <div className="rounded-lg border p-3 text-center">
+                    <p className="text-xs text-muted-foreground">Strengths</p>
+                    <p className="text-lg font-semibold">{analysis.strengths.length}</p>
+                  </div>
+                  <div className="rounded-lg border p-3 text-center">
+                    <p className="text-xs text-muted-foreground">Gaps</p>
+                    <p className="text-lg font-semibold">{analysis.weaknesses.length}</p>
+                  </div>
+                  <div className="rounded-lg border p-3 text-center">
+                    <p className="text-xs text-muted-foreground">Keywords Found</p>
+                    <p className="text-lg font-semibold">{analysis.keywordAnalysis.mentionedKeywords.length}</p>
+                  </div>
+                  <div className="rounded-lg border p-3 text-center">
+                    <p className="text-xs text-muted-foreground">Keywords Missing</p>
+                    <p className="text-lg font-semibold">{analysis.keywordAnalysis.missingKeywords.length}</p>
+                  </div>
+                </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-3">
                     <h3 className="text-xl font-headline flex items-center gap-2">
@@ -149,17 +172,30 @@ export function AnalysisResults({ result, jobDescription, resumeFileUri }: Analy
           </TabsContent>
 
           <TabsContent value="tips" className="mt-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {tips.improvementTips.map((tip, i) => (
-                <Card key={i} className="flex flex-col items-start p-6 gap-4 hover:shadow-md transition-shadow">
-                  <div className="flex items-center gap-4">
-                    <div className="bg-primary/10 rounded-full p-3">
-                      {getTipIcon(tip.area)}
+            <div className="space-y-8">
+              {Object.entries(groupedTips).map(([area, areaTips]) => (
+                <div key={area} className="space-y-3">
+                  <div className="flex items-center gap-2">
+                    <div className="bg-primary/10 rounded-full p-2">
+                      {getTipIcon(area)}
                     </div>
-                    <h3 className="font-headline text-xl flex-1">{tip.title}</h3>
+                    <h3 className="font-headline text-xl">{area}</h3>
+                    <Badge variant="secondary" className="ml-auto">{areaTips.length} tips</Badge>
                   </div>
-                  <p className="text-sm text-muted-foreground">{tip.description}</p>
-                </Card>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {areaTips.map((tip, i) => (
+                      <Card key={`${area}-${i}`} className="flex flex-col items-start p-6 gap-4 hover:shadow-md transition-shadow">
+                        <div className="flex items-center gap-4">
+                          <div className="bg-primary/10 rounded-full p-3">
+                            {getTipIcon(tip.area)}
+                          </div>
+                          <h4 className="font-headline text-lg flex-1">{tip.title}</h4>
+                        </div>
+                        <p className="text-sm text-muted-foreground">{tip.description}</p>
+                      </Card>
+                    ))}
+                  </div>
+                </div>
               ))}
             </div>
           </TabsContent>
