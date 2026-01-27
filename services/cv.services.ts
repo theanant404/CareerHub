@@ -1,16 +1,11 @@
-'use server';
-
-import {
-    analyzeResumeAgainstJobDescription,
-    type AnalyzeResumeAgainstJobDescriptionOutput
+import type {
+    AnalyzeResumeAgainstJobDescriptionOutput
 } from '@/ai/flows/analyze-resume-against-job-description';
-import {
-    generateResumeImprovementTips,
-    type GenerateResumeImprovementTipsOutput
+import type {
+    GenerateResumeImprovementTipsOutput
 } from '@/ai/flows/generate-resume-improvement-tips';
-import {
-    generateUpdatedResume,
-    type GenerateUpdatedResumeOutput
+import type {
+    GenerateUpdatedResumeOutput
 } from '@/ai/flows/generate-updated-resume';
 import { z } from 'zod';
 
@@ -25,22 +20,20 @@ export async function getAnalysis(input: { resumeFileUri: string, jobDescription
         throw new Error(validation.error.errors.map(e => e.message).join(', '));
     }
 
-    const { resumeFileUri, jobDescriptionText } = validation.data;
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/cv/analyze`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(input),
+    });
 
-    try {
-        const [analysisResult, tipsResult] = await Promise.all([
-            analyzeResumeAgainstJobDescription({ resumeFileUri, jobDescriptionText }),
-            generateResumeImprovementTips({ resumeFileUri, jobDescription: jobDescriptionText }),
-        ]);
-
-        return {
-            analysis: analysisResult,
-            tips: tipsResult,
-        };
-    } catch (error) {
-        console.error("Error in AI analysis:", error);
-        throw new Error("Failed to get analysis from AI service.");
+    if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || "Failed to get analysis from AI service.");
     }
+
+    return response.json();
 }
 
 export async function createUpdatedResume(input: { resumeFileUri: string, jobDescriptionText: string }): Promise<GenerateUpdatedResumeOutput> {
@@ -49,13 +42,18 @@ export async function createUpdatedResume(input: { resumeFileUri: string, jobDes
         throw new Error(validation.error.errors.map(e => e.message).join(', '));
     }
 
-    const { resumeFileUri, jobDescriptionText } = validation.data;
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/cv/update`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(input),
+    });
 
-    try {
-        const result = await generateUpdatedResume({ resumeFileUri, jobDescription: jobDescriptionText });
-        return result;
-    } catch (error) {
-        console.error("Error creating updated resume:", error);
-        throw new Error("Failed to create updated resume from AI service.");
+    if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || "Failed to create updated resume from AI service.");
     }
+
+    return response.json();
 }
