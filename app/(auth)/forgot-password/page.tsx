@@ -6,16 +6,24 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ArrowLeft, Mail, CheckCircle } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const { toast } = useToast();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
     // Frontend-only simulation
     setIsSubmitted(true);
+    
+    // Show success toast
+    toast({
+      title: "Reset link sent!",
+      description: `If an account with ${email} exists, a password reset link has been sent.`,
+    });
   };
 
   return (
