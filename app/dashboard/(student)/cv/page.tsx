@@ -28,6 +28,7 @@ export default function CvPage() {
     const [resumeFileUri, setResumeFileUri] = useState<string | null>(null);
     const [analysisResult, setAnalysisResult] = useState<AnalysisResult>(null);
     const [isLoading, setIsLoading] = useState(false);
+    const [showJobDetails, setShowJobDetails] = useState(true);
     const { toast } = useToast();
 
     const readFileAsDataUri = (file: File): Promise<string> => {
@@ -55,6 +56,7 @@ export default function CvPage() {
 
         setIsLoading(true);
         setAnalysisResult(null);
+        setShowJobDetails(false);
 
         try {
             const fileUri = await readFileAsDataUri(resumeFile);
@@ -77,52 +79,106 @@ export default function CvPage() {
     return (
         <div className="bg-background min-h-screen">
             <main className="container mx-auto pb-12 px-4">
-                <div className="grid grid-cols-1 md:max-w-4xl mx-auto">
-                    <Card className="shadow-lg">
-                        <CardHeader>
-                            <CardTitle className="font-headline text-2xl">Optimize Your Resume</CardTitle>
-                            <CardDescription>
-                                Paste the job description and upload your resume. Our AI will analyze it and provide feedback.
-                            </CardDescription>
-                        </CardHeader>
-                        <CardContent className="space-y-6">
-                            <div className="grid w-full gap-2">
-                                <Label htmlFor="job-description" className="font-semibold">Job Description</Label>
-                                <Textarea
-                                    id="job-description"
-                                    placeholder="Paste the full job description here..."
-                                    value={jobDescription}
-                                    onChange={(e) => setJobDescription(e.target.value)}
-                                    rows={8}
-                                    className="bg-background"
+                <div className="max-w-7xl mx-auto space-y-8">
+                    <div className="text-center space-y-2">
+                        <h1 className="font-headline text-3xl md:text-4xl">Optimize Your Resume</h1>
+                        <p className="text-muted-foreground">
+                            Paste a job description and upload your resume to get tailored, project-specific feedback.
+                        </p>
+                    </div>
+
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <Card className={`shadow-lg lg:col-span-2 ${showJobDetails ? '' : 'lg:col-span-1'}`}>
+                            <CardHeader>
+                                <div className="flex items-center justify-between">
+                                    <CardTitle className="font-headline text-2xl">Job Details</CardTitle>
+                                    {!showJobDetails && (
+                                        <Button variant="outline" size="sm" onClick={() => setShowJobDetails(true)}>
+                                            Edit job details
+                                        </Button>
+                                    )}
+                                </div>
+                                <CardDescription>
+                                    Use a complete job posting for the most accurate analysis.
+                                </CardDescription>
+                            </CardHeader>
+                            {showJobDetails ? (
+                                <>
+                                    <CardContent className="space-y-6">
+                                        <div className="grid w-full gap-2">
+                                            <Label htmlFor="job-description" className="font-semibold">Job Description</Label>
+                                            <Textarea
+                                                id="job-description"
+                                                placeholder="Paste the full job description here..."
+                                                value={jobDescription}
+                                                onChange={(e) => setJobDescription(e.target.value)}
+                                                rows={10}
+                                                className="bg-background"
+                                            />
+                                            <div className="flex items-center justify-between text-xs text-muted-foreground">
+                                                <span>Recommended: 200+ characters for higher accuracy</span>
+                                                <span>{jobDescription.length} characters</span>
+                                            </div>
+                                        </div>
+                                        <FileUpload file={resumeFile} onFileChange={(file) => {
+                                            setResumeFile(file);
+                                            if (!file) {
+                                                setResumeFileUri(null);
+                                            }
+                                        }} />
+                                    </CardContent>
+                                    <CardFooter>
+                                        <Button onClick={handleAnalysis} disabled={isLoading} className="w-full">
+                                            <Sparkles className="mr-2 h-4 w-4" />
+                                            {isLoading ? 'Analyzing...' : 'Analyze My Resume'}
+                                        </Button>
+                                    </CardFooter>
+                                </>
+                            ) : (
+                                <CardContent className="space-y-4">
+                                    <div className="rounded-md border p-3 text-sm text-muted-foreground">
+                                        <p className="font-semibold text-foreground">Job description locked</p>
+                                        <p className="mt-1">Edit to rerun analysis with updated details.</p>
+                                    </div>
+                                    <Button onClick={handleAnalysis} disabled={isLoading} className="w-full" variant="secondary">
+                                        <Sparkles className="mr-2 h-4 w-4" />
+                                        {isLoading ? 'Analyzing...' : 'Re-run Analysis'}
+                                    </Button>
+                                </CardContent>
+                            )}
+                        </Card>
+
+                        <Card className="shadow-sm">
+                            <CardHeader>
+                                <CardTitle className="font-headline text-xl">What You’ll Get</CardTitle>
+                                <CardDescription>
+                                    Clear, section-by-section feedback with a focus on projects and impact.
+                                </CardDescription>
+                            </CardHeader>
+                            <CardContent className="space-y-4 text-sm text-muted-foreground">
+                                <ul className="list-disc list-inside space-y-2">
+                                    <li>ATS-style match score and summary</li>
+                                    <li>Strengths and gaps by requirement</li>
+                                    <li>Keyword coverage analysis</li>
+                                    <li>Project-specific improvement tips</li>
+                                </ul>
+                            </CardContent>
+                        </Card>
+                    </div>
+
+                    <div>
+                        {isLoading && <AnalysisSkeleton />}
+
+                        {analysisResult && resumeFileUri && (
+                            <div className="animate-fade-in">
+                                <AnalysisResults
+                                    result={analysisResult}
+                                    jobDescription={jobDescription}
+                                    resumeFileUri={resumeFileUri}
                                 />
                             </div>
-                            <FileUpload file={resumeFile} onFileChange={(file) => {
-                                setResumeFile(file);
-                                if (!file) {
-                                    setResumeFileUri(null);
-                                }
-                            }} />
-                        </CardContent>
-                        <CardFooter>
-                            <Button onClick={handleAnalysis} disabled={isLoading} className="w-full">
-                                <Sparkles className="mr-2 h-4 w-4" />
-                                {isLoading ? 'Analyzing...' : 'Analyze My Resume'}
-                            </Button>
-                        </CardFooter>
-                    </Card>
-
-                    {isLoading && <AnalysisSkeleton />}
-
-                    {analysisResult && resumeFileUri && (
-                        <div className="animate-fade-in">
-                            <AnalysisResults
-                                result={analysisResult}
-                                jobDescription={jobDescription}
-                                resumeFileUri={resumeFileUri}
-                            />
-                        </div>
-                    )}
+                        )}
+                    </div>
                 </div>
             </main>
         </div>
