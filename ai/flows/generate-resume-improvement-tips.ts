@@ -8,8 +8,8 @@
  * - GenerateResumeImprovementTipsOutput - The return type for the generateResumeImprovementTips function.
  */
 
-import {ai} from '@/ai/genkit';
-import {z} from 'genkit';
+import { ai } from '@/ai/genkit';
+import { z } from 'genkit';
 
 const GenerateResumeImprovementTipsInputSchema = z.object({
   jobDescription: z
@@ -24,9 +24,9 @@ export type GenerateResumeImprovementTipsInput = z.infer<
 >;
 
 const TipSchema = z.object({
-    title: z.string().describe("A short, catchy title for the improvement tip (e.g., 'Quantify Your Achievements')."),
-    description: z.string().describe("A detailed, actionable explanation of the tip and why it's important for this specific job application."),
-    area: z.string().describe("The section of the resume this tip applies to (e.g., 'Keywords', 'Experience', 'Skills').")
+  title: z.string().describe("A short, catchy title for the improvement tip (e.g., 'Quantify Your Achievements')."),
+  description: z.string().describe("A detailed, actionable explanation of the tip and why it's important for this specific job application."),
+  area: z.string().describe("The section of the resume this tip applies to (e.g., 'Keywords', 'Experience', 'Skills').")
 });
 
 const GenerateResumeImprovementTipsOutputSchema = z.object({
@@ -48,9 +48,16 @@ export async function generateResumeImprovementTips(
 
 const prompt = ai.definePrompt({
   name: 'generateResumeImprovementTipsPrompt',
-  input: {schema: GenerateResumeImprovementTipsInputSchema},
-  output: {schema: GenerateResumeImprovementTipsOutputSchema},
-  prompt: `You are an expert resume consultant. Provide at least 3-5 personalized tips to improve the resume to better match the job description. For each tip, provide a title, a detailed description with actionable advice, and specify which area of the resume it applies to.
+  input: { schema: GenerateResumeImprovementTipsInputSchema },
+  output: { schema: GenerateResumeImprovementTipsOutputSchema },
+  prompt: `You are an expert resume consultant and ATS reviewer. Provide 5–7 personalized, high-impact tips to improve the resume for this specific job description.
+
+Rules:
+- Use only evidence from the resume and job description. Do not invent details.
+- Each tip must include: a short title, a detailed actionable description, and an \`area\` label.
+- Ensure coverage across key sections: Summary, Experience, Projects, Skills, Education, and Keywords/ATS.
+- At least one tip must be specifically about the Projects section (e.g., relevance, impact, tech stack, outcomes).
+- If a section is missing or weak, explicitly say so and propose how to improve it.
 
 Job Description:
 {{jobDescription}}
@@ -66,7 +73,7 @@ const generateResumeImprovementTipsFlow = ai.defineFlow(
     outputSchema: GenerateResumeImprovementTipsOutputSchema,
   },
   async input => {
-    const {output} = await prompt(input);
+    const { output } = await prompt(input);
     return output!;
   }
 );
