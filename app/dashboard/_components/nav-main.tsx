@@ -44,32 +44,48 @@ export function NavMain({
                         defaultOpen={item.isActive}
                         className="group/collapsible"
                     >
-                        <SidebarMenuItem>
-                            <CollapsibleTrigger asChild>
-                                <SidebarMenuButton tooltip={item.title} className="">
-                                    <span>{item.icon && <item.icon size={20} />}</span>
-                                    <span className="text-md font-semibold">{item.title}</span>
-                                    {item.items && item.items.length > 0 && (
-                                        <>
-                                            <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
-                                        </>
-                                    )}
-                                </SidebarMenuButton>
-                            </CollapsibleTrigger>
-                            <CollapsibleContent>
-                                <SidebarMenuSub>
-                                    {item.items?.map((subItem) => (
-                                        <SidebarMenuSubItem key={subItem.title}>
-                                            <SidebarMenuSubButton asChild>
-                                                <Link href={subItem.url}>
-                                                    <span>{subItem.title}</span>
-                                                </Link>
-                                            </SidebarMenuSubButton>
-                                        </SidebarMenuSubItem>
-                                    ))}
-                                </SidebarMenuSub>
-                            </CollapsibleContent>
-                        </SidebarMenuItem>
+
+                        {item.items && item.items.length > 0 ? (
+                            <>
+                                <SidebarMenuItem>
+                                    <CollapsibleTrigger asChild>
+                                        <SidebarMenuButton tooltip={item.title} className="">
+                                            <span>{item.icon && <item.icon size={20} />}</span>
+                                            <span className="text-md font-semibold">{item.title}</span>
+
+                                            <>
+                                                <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                                            </>
+                                        </SidebarMenuButton>
+                                    </CollapsibleTrigger>
+                                    <CollapsibleContent>
+                                        <SidebarMenuSub>
+                                            {item.items?.map((subItem) => (
+                                                <SidebarMenuSubItem key={subItem.title}>
+                                                    <SidebarMenuSubButton asChild>
+                                                        <Link href={subItem.url}>
+                                                            <span>{subItem.title}</span>
+                                                        </Link>
+                                                    </SidebarMenuSubButton>
+                                                </SidebarMenuSubItem>
+                                            ))}
+                                        </SidebarMenuSub>
+                                    </CollapsibleContent>
+                                </SidebarMenuItem>
+                            </>) : (<>
+                                <SidebarMenuItem>
+                                    <CollapsibleTrigger asChild>
+                                        <SidebarMenuButton tooltip={item.title} className="">
+                                            <Link href={`${item.url}`} className="flex w-full items-center gap-2">
+                                                <span>{item.icon && <item.icon size={20} />}</span>
+                                                <span className="text-md font-semibold">{item.title}</span>
+                                            </Link>
+                                        </SidebarMenuButton>
+                                    </CollapsibleTrigger>
+
+                                </SidebarMenuItem>
+                            </>)
+                        }
                     </Collapsible>
                 ))}
             </SidebarMenu>
