@@ -4,7 +4,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
-  Building,
   MapPin,
   Users,
   Star,
@@ -41,8 +40,46 @@ export default function CompanyCard({ company, showViewButton = true }: CompanyC
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between">
           <div className="flex items-center space-x-3 flex-1">
-            <div className="w-12 h-12 bg-gradient-to-br from-primary/20 to-primary/10 rounded-lg flex items-center justify-center">
-              <Building className="w-6 h-6 text-primary" />
+            <div className="w-12 h-12 rounded-lg overflow-hidden bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center">
+              {company.logo ? (
+                <img
+                  src={company.logo}
+                  alt={`${company.companyName} logo`}
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    // Fallback to SVG if image fails to load
+                    const target = e.target as HTMLImageElement;
+                    target.style.display = 'none';
+                    const parent = target.parentElement;
+                    if (parent) {
+                      parent.innerHTML = `
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <rect x="2" y="3" width="20" height="18" rx="2" fill="currentColor" opacity="0.2"/>
+                          <rect x="6" y="7" width="12" height="2" rx="1" fill="currentColor"/>
+                          <rect x="6" y="11" width="8" height="2" rx="1" fill="currentColor"/>
+                          <rect x="6" y="15" width="10" height="2" rx="1" fill="currentColor"/>
+                          <circle cx="9" cy="9" r="1" fill="currentColor"/>
+                        </svg>
+                      `;
+                    }
+                  }}
+                />
+              ) : (
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="text-primary"
+                >
+                  <rect x="2" y="3" width="20" height="18" rx="2" fill="currentColor" opacity="0.2"/>
+                  <rect x="6" y="7" width="12" height="2" rx="1" fill="currentColor"/>
+                  <rect x="6" y="11" width="8" height="2" rx="1" fill="currentColor"/>
+                  <rect x="6" y="15" width="10" height="2" rx="1" fill="currentColor"/>
+                  <circle cx="9" cy="9" r="1" fill="currentColor"/>
+                </svg>
+              )}
             </div>
             <div className="flex-1">
               <CardTitle className="text-lg font-semibold group-hover:text-primary transition-colors">
