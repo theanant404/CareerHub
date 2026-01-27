@@ -100,11 +100,6 @@ export function AnalysisResults({ result, jobDescription, resumeFileUri }: Analy
                 <Progress
                   value={analysis.matchScore}
                   className="w-full h-2"
-                  indicatorClassName={cn({
-                    "bg-green-500": analysis.matchScore > 75,
-                    "bg-yellow-500": analysis.matchScore > 50 && analysis.matchScore <= 75,
-                    "bg-red-500": analysis.matchScore <= 50,
-                  })}
                 />
                 <CardDescription className="pt-4 !text-base text-center">{analysis.summary}</CardDescription>
               </CardHeader>
