@@ -6,6 +6,7 @@ import {
     Briefcase,
     GraduationCap,
     LayoutDashboard,
+    Newspaper,
     Settings,
     Trophy,
     User,
@@ -33,41 +34,41 @@ const navMain = [
     },
     {
         title: "Browse Jobs",
-        url: "/browse",
+        url: "/dashboard/browse",
         icon: Briefcase,
     },
     {
         title: "Bookmarks",
-        url: "/bookmarks",
+        url: "/dashboard/bookmarks",
         icon: Bookmark,
     },
     {
         title: "Assessments",
-        url: "/assessments",
+        url: "/dashboard/assessments",
         icon: GraduationCap,
     },
     {
         title: "Leaderboard",
-        url: "/leaderboard",
+        url: "/dashboard/leaderboard",
         icon: Trophy,
     },
     {
         title: "Profile",
-        url: "/profile",
+        url: "/dashboard/profile",
         icon: User,
         items: [
-            { title: "Overview", url: "/profile" },
-            { title: "Edit Profile", url: "/profile/edit" },
-            { title: "Settings", url: "/settings" },
+            { title: "Overview", url: "/dashboard/profile" },
+            { title: "Edit Profile", url: "/dashboard/profile/edit" },
+            { title: "Settings", url: "/dashboard/settings" },
         ],
     },
 ]
 
 const quickLinks = [
     {
-        name: "Saved Jobs",
-        url: "/bookmarks",
-        icon: Bookmark,
+        name: "Analyse CV",
+        url: "/dashboard/cv",
+        icon: Newspaper,
     },
     {
         name: "Applications",
