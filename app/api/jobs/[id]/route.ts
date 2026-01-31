@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import dbConnect from "@/db/mongoDb";
-import { JobModel, CompanyModel } from "@/models/company/profile/CompanyBasicInfo.Model";
+import { CompanyModel } from "@/models/company/profile/CompanyBasicInfo.Model";
 import { jobPostingSchema } from "@/lib/validations/auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/options";
+import { JobModel } from "@/models/company/job/Job.models";
 
 export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
     try {
@@ -14,7 +15,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
 
         await dbConnect();
 
-        const company = await CompanyModel.findOne({ email: session.user.email });
+        const company = await CompanyModel.findOne({ user: session.user.id });
         if (!company) {
             return NextResponse.json({ message: "Company not found" }, { status: 404 });
         }
@@ -27,9 +28,20 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
         const body = await request.json();
         const validatedData = jobPostingSchema.parse(body);
 
+        const updatePayload: Record<string, any> = {
+            ...validatedData,
+            remote: typeof validatedData.remote === "boolean"
+                ? validatedData.remote
+                : validatedData.workplaceType === "Remote",
+        };
+
+        if (validatedData.status) {
+            updatePayload.isActive = validatedData.status === "published";
+        }
+
         const updatedJob = await JobModel.findByIdAndUpdate(
             params.id,
-            validatedData,
+            updatePayload,
             { new: true }
         );
 

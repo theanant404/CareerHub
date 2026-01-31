@@ -41,20 +41,57 @@ export const companySignupSchema = z.object({
 export type CompanySignupFormData = z.infer<typeof companySignupSchema>
 
 // Job posting schema
+const jobTypeEnum = z.enum([
+    "Full-time",
+    "Part-time",
+    "Contract",
+    "Freelance",
+    "Internship",
+    "full-time",
+    "part-time",
+    "contract",
+    "internship",
+])
+
+const experienceEnum = z.enum([
+    "Entry Level",
+    "Mid Level",
+    "Senior Level",
+    "Lead / Manager",
+    "Director",
+    "Executive",
+])
+
+const workplaceEnum = z.enum(["On-site", "Hybrid", "Remote"])
+
+const salaryFrequencyEnum = z.enum(["Yearly", "Monthly", "Hourly"])
+
+const jobStatusEnum = z.enum(["published", "draft"])
+
 export const jobPostingSchema = z.object({
     title: z.string().min(1, "Job title is required"),
-    description: z.string().min(50, "Description must be at least 50 characters"),
-    requirements: z.array(z.string()).min(1, "At least one requirement is needed"),
+    department: z.string().optional(),
+    description: z.string().min(20, "Description must be at least 20 characters"),
+    requirements: z.array(z.string()).optional().default([]),
     location: z.string().min(1, "Location is required"),
-    type: z.enum(['full-time', 'part-time', 'contract', 'internship']),
-    remote: z.boolean(),
+    type: jobTypeEnum,
+    workplaceType: workplaceEnum.optional(),
+    remote: z.boolean().optional(),
+    experience: experienceEnum.optional(),
+    experienceRange: z.string().optional(),
     salary: z.object({
         min: z.number().optional(),
         max: z.number().optional(),
-        currency: z.string().default('USD'),
+        currency: z.string().default('USD').optional(),
+        frequency: salaryFrequencyEnum.optional(),
     }).optional(),
-    skills: z.array(z.string()),
-    experience: z.string().min(1, "Experience level is required"),
+    skills: z.array(z.string()).optional().default([]),
+    benefits: z.array(z.string()).optional().default([]),
+    applyUrl: z.string().optional(),
+    applyBy: z.string().optional(),
+    thumbnailUrl: z.string().optional(),
+    documents: z.array(z.object({ name: z.string(), url: z.string() })).optional().default([]),
+    status: jobStatusEnum.optional().default("published"),
 })
 
 export type JobPostingFormData = z.infer<typeof jobPostingSchema>

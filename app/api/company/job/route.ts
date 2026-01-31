@@ -6,27 +6,6 @@ import { jobPostingSchema } from "@/lib/validations/auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/options";
 import { JobModel } from "@/models/company/job/Job.models";
 
-export async function GET(request: NextRequest) {
-    try {
-        await dbConnect();
-        const { searchParams } = new URL(request.url);
-        const companyId = searchParams.get('companyId');
-
-        if (companyId) {
-            const jobs = await JobModel.find({ companyId }).populate('companyId', 'name logo');
-            return NextResponse.json({ jobs });
-        }
-
-        const jobs = await JobModel.find({
-            $or: [{ status: "published" }, { status: { $exists: false }, isActive: true }]
-        }).populate('companyId', 'name logo');
-        return NextResponse.json({ jobs });
-
-    } catch (error) {
-        return NextResponse.json({ message: "Failed to fetch jobs" }, { status: 500 });
-    }
-}
-
 export async function POST(request: NextRequest) {
     try {
         const session = await getServerSession(authOptions);
@@ -36,7 +15,7 @@ export async function POST(request: NextRequest) {
 
         await dbConnect();
 
-        const company = await CompanyModel.findOne({ email: session.user.email });
+        const company = await CompanyModel.findOne({ user: session.user.id });
         if (!company) {
             return NextResponse.json({ message: "Company not found" }, { status: 404 });
         }
@@ -58,14 +37,14 @@ export async function POST(request: NextRequest) {
         });
 
         return NextResponse.json({
-            message: "Job posted successfully",
-            job
+            message: status === "draft" ? "Job saved as draft" : "Job posted successfully",
+            job,
         }, { status: 201 });
 
     } catch (error: any) {
-        if (error.name === 'ZodError') {
-            return NextResponse.json({ message: error.errors[0].message }, { status: 400 });
+        if (error?.name === "ZodError") {
+            return NextResponse.json({ message: error.errors?.[0]?.message || "Invalid data" }, { status: 400 });
         }
-        return NextResponse.json({ message: "Failed to create job" }, { status: 500 });
+        return NextResponse.json({ message: error?.message || "Failed to create job" }, { status: 500 });
     }
 }
