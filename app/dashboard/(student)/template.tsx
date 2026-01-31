@@ -11,7 +11,6 @@ import { Separator } from "@/components/ui/separator"
 import {
     SidebarInset,
     SidebarProvider,
-    SidebarTrigger,
 } from "@/components/ui/sidebar"
 import { AppSidebar } from "../_components/student/student-app-sidebar"
 import { usePathname } from "next/navigation"
@@ -41,7 +40,7 @@ export default function Page({ children }: { children: React.ReactNode }) {
                                     </BreadcrumbItem>
                                     {(() => {
                                         const segments = (pathName || "").split("?")[0].split("/").filter(Boolean)
-                                        const companyIdx = segments.indexOf("company")
+                                        const companyIdx = segments.indexOf("dashboard")
                                         const trail = companyIdx >= 0 ? segments.slice(companyIdx + 1) : []
                                         const format = (s: string) => s.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())
 
