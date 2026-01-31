@@ -30,7 +30,7 @@ export function RoleSelectionDialog({
 
         try {
             const result = await updateUserRoleAction(userEmail, role)
-
+            router.refresh()
             if (result.success) {
                 // Redirect based on role
                 const redirectPath = role === "user" ? "/dashboard" : "/dashboard/company"

@@ -5,11 +5,17 @@ export interface Company extends Document {
     email: string;
     password?: string;
     logo?: string;
+    tagline?: string;
     description?: string;
     website?: string;
     location?: string;
+    headquarters?: string;
     industry?: string;
     size?: string;
+    registrationNumber?: string;
+    gstPan?: string;
+    emailDomain?: string;
+    foundingYear?: number;
     isVerified: boolean;
     createdAt: Date;
     updatedAt: Date;
@@ -40,11 +46,17 @@ const CompanySchema: Schema<Company> = new mongoose.Schema({
     email: { type: String, required: true, unique: true, index: true },
     password: { type: String },
     logo: { type: String },
+    tagline: { type: String },
     description: { type: String },
     website: { type: String },
     location: { type: String },
+    headquarters: { type: String },
     industry: { type: String },
     size: { type: String, enum: ['1-10', '11-50', '51-200', '201-500', '500+'] },
+    registrationNumber: { type: String },
+    gstPan: { type: String },
+    emailDomain: { type: String },
+    foundingYear: { type: Number },
     isVerified: { type: Boolean, default: false },
 }, { timestamps: true });
 

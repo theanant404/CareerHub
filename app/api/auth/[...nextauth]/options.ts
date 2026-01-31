@@ -5,7 +5,7 @@ import GoogleProvider from "next-auth/providers/google";
 import bcrypt from "bcryptjs";
 import dbConnect from "@/db/mongoDb";
 import UserModel from "@/models/User.Model";
-import { CompanyModel } from "@/models/Company.Model";
+import { CompanyModel } from "@/models/company/profile/CompanyBasicInfo.Model";
 
 type Credentials = {
     email?: string;

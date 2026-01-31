@@ -58,3 +58,20 @@ export const jobPostingSchema = z.object({
 })
 
 export type JobPostingFormData = z.infer<typeof jobPostingSchema>
+
+// Company profile basic info schema
+export const companyProfileSchema = z.object({
+    name: z.string().min(2, "Company name must be at least 2 characters"),
+    tagline: z.string().min(2, "Tagline is required"),
+    industry: z.string().min(1, "Industry is required"),
+    size: z.enum(['1-10', '11-50', '51-200', '201-500', '500+']),
+    registrationNumber: z.string().min(8, "Registration number is required"),
+    gstPan: z.string().min(10, "GST/PAN is required"),
+    emailDomain: z.string().min(3, "Email domain is required"),
+    foundingYear: z.number().int().min(1800).max(new Date().getFullYear()),
+    logoUrl: z.string().url().optional().nullable(),
+    about: z.string().min(10, "About section must be at least 10 characters"),
+    headquarters: z.string().min(2, "Headquarters is required"),
+})
+
+export type CompanyProfileFormData = z.infer<typeof companyProfileSchema>
