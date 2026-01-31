@@ -1,5 +1,6 @@
+import { ApiError } from "@/utils/ApiError";
 import { v2 as cloudinary, type UploadApiResponse } from "cloudinary";
-import { ApiError } from "next/dist/server/api-utils";
+
 
 
 type SignedUploadOptions = {
