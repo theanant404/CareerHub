@@ -24,11 +24,14 @@ export default function Page({ children }: { children: React.ReactNode }) {
             <SidebarInset>
                 <header className="flex h-16 shrink-0 items-center gap-2 overflow-hidden transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
                     <div className="flex min-w-0 flex-1 items-center gap-2 px-4 whitespace-nowrap">
-                        <SideBarLogo />
-                        <Separator
-                            orientation="vertical"
-                            className="mr-2 data-[orientation=vertical]:h-4"
-                        />
+                        <div className="justify-center items-center flex">
+                            <SideBarLogo />
+                            <Separator
+                                orientation="vertical"
+                                className="mr-2 data-[orientation=vertical]:h-4"
+                            />
+                        </div>
+
                         <Breadcrumb className="min-w-0">
                             <BreadcrumbList className="flex flex-nowrap items-center gap-2 overflow-hidden">
                                 <BreadcrumbItem className="hidden md:block">
