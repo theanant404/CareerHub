@@ -227,7 +227,7 @@ export default function CompanyBasicInfoPage() {
                 headquarters: formData.get("hq")?.toString().trim(),
             }
 
-            const res = await fetch("/api/company/profile", {
+            const res = await fetch("/api/company/profile-basic-info", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(payload),
