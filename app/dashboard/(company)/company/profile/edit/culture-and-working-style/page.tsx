@@ -12,6 +12,8 @@ import {
     SelectValue,
 } from "@/components/ui/select"
 import { Checkbox } from "@/components/ui/checkbox"
+import { toast } from "sonner"
+import { Loader2 } from "lucide-react"
 
 const workModes = ["Remote", "On-site", "Hybrid"] as const
 const companyValues = [
@@ -34,6 +36,8 @@ export default function CultureAndWorkingStylePage() {
     const [selectedValues, setSelectedValues] = useState<Record<string, boolean>>({})
     const [selectedPerks, setSelectedPerks] = useState<Record<string, boolean>>({})
     const [photoFiles, setPhotoFiles] = useState<File[]>([])
+    const [photoUrls, setPhotoUrls] = useState<string[]>([])
+    const [photoUploading, setPhotoUploading] = useState(false)
 
     const previews = useMemo(
         () => photoFiles.map((f) => ({ name: f.name, url: URL.createObjectURL(f) })),
@@ -45,20 +49,92 @@ export default function CultureAndWorkingStylePage() {
         setPhotoFiles(files)
     }
 
+    const uploadOfficePhotos = async (files: File[]) => {
+        if (!files.length) return [] as string[]
+        setPhotoUploading(true)
+        const toastId = toast.loading("Uploading office photos...")
+        try {
+            const signRes = await fetch("/api/image-upload", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ folder: "company-office-photos", resourceType: "image" }),
+            })
+
+            if (!signRes.ok) {
+                throw new Error("Failed to get upload signature")
+            }
+
+            const signedPayload = await signRes.json()
+            const uploads = await Promise.all(
+                files.map(async (file) => {
+                    const uploadForm = new FormData()
+                    Object.entries(signedPayload.fields).forEach(([key, value]) => {
+                        if (value) uploadForm.append(key, String(value))
+                    })
+                    uploadForm.append("file", file)
+
+                    const cloudRes = await fetch(signedPayload.uploadUrl, {
+                        method: "POST",
+                        body: uploadForm,
+                    })
+
+                    if (!cloudRes.ok) {
+                        throw new Error("Failed to upload an office photo")
+                    }
+
+                    const cloudData = await cloudRes.json()
+                    return cloudData.secure_url as string
+                })
+            )
+
+            setPhotoUrls(uploads)
+            toast.success("Office photos uploaded")
+            return uploads
+        } catch (error: any) {
+            toast.error(error?.message || "Office photo upload failed")
+            throw error
+        } finally {
+            toast.dismiss(toastId)
+            setPhotoUploading(false)
+        }
+    }
+
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
         setIsSubmitting(true)
+        const saveToastId = toast.loading("Saving culture & working style...")
+        try {
+            let uploadedPhotoUrls = photoUrls
+            if (photoFiles.length) {
+                uploadedPhotoUrls = await uploadOfficePhotos(photoFiles)
+            }
 
-        const payload = {
-            workMode: selectedWorkMode,
-            companyValues: Object.keys(selectedValues).filter((k) => selectedValues[k]),
-            perks: Object.keys(selectedPerks).filter((k) => selectedPerks[k]),
-            officePhotosCount: photoFiles.length,
+            const payload = {
+                workMode: selectedWorkMode,
+                companyValues: Object.keys(selectedValues).filter((k) => selectedValues[k]),
+                perks: Object.keys(selectedPerks).filter((k) => selectedPerks[k]),
+                officePhotoUrls: uploadedPhotoUrls,
+            }
+
+            const res = await fetch("/api/company/profile/culture", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload),
+            })
+
+            if (!res.ok) {
+                const error = await res.json()
+                toast.error(error?.message || "Failed to save culture & working style")
+                return
+            }
+
+            toast.success("Culture & working style saved")
+        } catch (error: any) {
+            toast.error(error?.message || "Something went wrong")
+        } finally {
+            toast.dismiss(saveToastId)
+            setIsSubmitting(false)
         }
-
-        // TODO: Wire to API endpoint to persist
-        console.log("Submitting culture & working style", payload)
-        setIsSubmitting(false)
     }
 
     return (
@@ -148,8 +224,15 @@ export default function CultureAndWorkingStylePage() {
                 </div>
 
                 <div className="flex justify-end gap-3">
-                    <Button type="submit" disabled={isSubmitting}>
-                        {isSubmitting ? "Saving..." : "Save Culture & Style"}
+                    <Button type="submit" disabled={isSubmitting || photoUploading}>
+                        {isSubmitting ? (
+                            <span className="inline-flex items-center gap-2">
+                                <Loader2 className="h-4 w-4 animate-spin" />
+                                Saving...
+                            </span>
+                        ) : (
+                            "Save Culture & Style"
+                        )}
                     </Button>
                 </div>
             </form>
