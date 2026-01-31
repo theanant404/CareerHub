@@ -77,3 +77,40 @@ export const companyProfileSchema = z.object({
 })
 
 export type CompanyProfileFormData = z.infer<typeof companyProfileSchema>
+
+// Company culture & working style schema
+export const companyCultureSchema = z.object({
+    workMode: z.string().optional(),
+    companyValues: z.array(z.string()).optional(),
+    perks: z.array(z.string()).optional(),
+    officePhotoUrls: z.array(z.string().url()).optional(),
+})
+
+export type CompanyCultureFormData = z.infer<typeof companyCultureSchema>
+
+// Company recruitment specifics schema
+export const companyRecruitmentSchema = z.object({
+    recruiterName: z.string().min(2, "Recruiter name is required"),
+    recruiterLinkedIn: z.string().url("Recruiter LinkedIn must be a valid URL"),
+    interviewProcess: z.array(z.string()).min(1, "At least one interview step is required"),
+    idealCandidatePersona: z.string().optional(),
+})
+
+export type CompanyRecruitmentFormData = z.infer<typeof companyRecruitmentSchema>
+
+// Company social links schema
+export const companySocialLinksSchema = z.object({
+    website: z.string().url("Website must be a valid URL"),
+    linkedin: z.string().url("LinkedIn must be a valid URL"),
+    social: z.string().url("Social URL must be valid").optional().nullable(),
+    reviews: z.string().url("Reviews URL must be valid").optional().nullable(),
+    workEmailDomain: z.string().min(3, "Work email domain is required"),
+    extraLinks: z.array(
+        z.object({
+            label: z.string().min(1, "Label is required"),
+            url: z.string().url("URL must be valid"),
+        })
+    ).optional(),
+})
+
+export type CompanySocialLinksFormData = z.infer<typeof companySocialLinksSchema>
