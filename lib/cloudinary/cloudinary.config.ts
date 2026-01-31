@@ -5,7 +5,6 @@ import { v2 as cloudinary, type UploadApiResponse } from "cloudinary";
 
 type SignedUploadOptions = {
     folder?: string;
-    publicId?: string;
     uploadPreset?: string;
     resourceType?: "image" | "auto" | "video" | "raw";
 };
@@ -68,7 +67,6 @@ const buildSignedUploadPayload = (options: SignedUploadOptions = {}): SignedUplo
 
     const paramsToSign: Record<string, string | number> = { timestamp };
     if (options.folder) paramsToSign.folder = options.folder;
-    if (options.publicId) paramsToSign.public_id = options.publicId;
     if (uploadPreset) paramsToSign.upload_preset = uploadPreset;
 
     const signature = cloudinary.utils.api_sign_request(paramsToSign, CLOUDINARY_API_SECRET);
@@ -83,7 +81,6 @@ const buildSignedUploadPayload = (options: SignedUploadOptions = {}): SignedUplo
             timestamp,
             signature,
             folder: options.folder,
-            public_id: options.publicId,
             upload_preset: uploadPreset,
         },
     };
