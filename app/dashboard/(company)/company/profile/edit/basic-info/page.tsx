@@ -12,6 +12,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
+import { MarkdownTextArea } from "@/components/markdown-text-area"
 
 const industries = [
     "SaaS",
@@ -36,6 +37,7 @@ const companySizes = [
 
 export default function CompanyBasicInfoPage() {
     const [isSubmitting, setIsSubmitting] = useState(false)
+    const [about, setAbout] = useState("")
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
@@ -167,12 +169,13 @@ export default function CompanyBasicInfoPage() {
                 </div>
 
                 <div className="space-y-2">
-                    <Label htmlFor="about">About Company <span className="text-red-500">*</span></Label>
-                    <Textarea
-                        id="about"
+                    <MarkdownTextArea
+                        label="About Company"
                         name="about"
-                        placeholder="Describe your history, mission, and goals..."
-                        className="min-h-[160px]"
+                        placeholder="Describe your company..."
+                        value={about}
+                        onChange={(value) => setAbout(value)}
+                        rows={10}
                         required
                     />
                     <p className="text-xs text-muted-foreground">Use rich text in future; currently accepts plain text.</p>
