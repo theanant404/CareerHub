@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
+import { toast } from "sonner"
+import { Loader2 } from "lucide-react"
 
 export default function RecruitmentSpecificsPage() {
     const [isSubmitting, setIsSubmitting] = useState(false)
@@ -38,16 +40,35 @@ export default function RecruitmentSpecificsPage() {
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
         setIsSubmitting(true)
-        const fd = new FormData(event.currentTarget)
-        const payload = {
-            recruiterName: fd.get("recruiterName"),
-            recruiterLinkedIn: fd.get("recruiterLinkedIn"),
-            interviewProcess: steps.map((s) => s.trim()).filter(Boolean),
-            idealCandidatePersona: fd.get("idealCandidatePersona"),
+        const saveToastId = toast.loading("Saving recruitment details...")
+        try {
+            const fd = new FormData(event.currentTarget)
+            const payload = {
+                recruiterName: fd.get("recruiterName")?.toString().trim(),
+                recruiterLinkedIn: fd.get("recruiterLinkedIn")?.toString().trim(),
+                interviewProcess: steps.map((s) => s.trim()).filter(Boolean),
+                idealCandidatePersona: fd.get("idealCandidatePersona")?.toString().trim(),
+            }
+
+            const res = await fetch("/api/company/profile/recruitment", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload),
+            })
+
+            if (!res.ok) {
+                const error = await res.json()
+                toast.error(error?.message || "Failed to save recruitment details")
+                return
+            }
+
+            toast.success("Recruitment details saved")
+        } catch (error: any) {
+            toast.error(error?.message || "Something went wrong")
+        } finally {
+            toast.dismiss(saveToastId)
+            setIsSubmitting(false)
         }
-        // TODO: send to API endpoint
-        console.log("Submitting recruitment specifics", payload)
-        setIsSubmitting(false)
     }
 
     return (
@@ -128,7 +149,14 @@ export default function RecruitmentSpecificsPage() {
 
                 <div className="flex justify-end gap-3">
                     <Button type="submit" disabled={isSubmitting}>
-                        {isSubmitting ? "Saving..." : "Save Recruitment Details"}
+                        {isSubmitting ? (
+                            <span className="inline-flex items-center gap-2">
+                                <Loader2 className="h-4 w-4 animate-spin" />
+                                Saving...
+                            </span>
+                        ) : (
+                            "Save Recruitment Details"
+                        )}
                     </Button>
                 </div>
             </form>
