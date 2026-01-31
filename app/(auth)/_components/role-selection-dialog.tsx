@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { useRouter } from "next/navigation"
 import { Users, Building2, Loader2 } from "lucide-react"
-import { updateUserRoleAction } from "../action"
+import { updateUserRoleAction } from "../../../services/auth.services"
 
 interface RoleSelectionDialogProps {
     isOpen: boolean
