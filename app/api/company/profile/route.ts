@@ -17,19 +17,28 @@ export async function GET() {
 
         await dbConnect()
         const user = await UserModel.findOne({ email: session.user.email })
+        // console.log("Found user:", user);
         if (!user) {
             return NextResponse.json({ message: "User not found" }, { status: 404 })
         }
 
-        const [basicInfo, culture, recruitment, socialLinks] = await Promise.all([
+        const [basicByUser, basicByEmail, culture, recruitment, socialLinks] = await Promise.all([
             CompanyBasicInfoModel.findOne({ user: user._id }),
+            CompanyBasicInfoModel.findOne({ email: session.user.email }),
             CompanyCultureModel.findOne({ user: user._id }),
             CompanyRecruitmentModel.findOne({ user: user._id }),
             CompanySocialLinksModel.findOne({ user: user._id }),
         ])
 
+        const basicInfo = basicByUser || basicByEmail
         return NextResponse.json(
             {
+                user: {
+                    id: user._id,
+                    email: user.email,
+                    name: user.name,
+                    image: user.image,
+                },
                 basicInfo,
                 culture,
                 recruitment,
