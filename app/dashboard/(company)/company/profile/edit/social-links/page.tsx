@@ -4,6 +4,8 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { toast } from "sonner"
+import { Loader2 } from "lucide-react"
 
 type ExtraLink = { id: number; label: string; url: string }
 
@@ -14,11 +16,39 @@ export default function CompanySocialLinksPage() {
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
         setIsSubmitting(true)
-        const formData = new FormData(event.currentTarget)
-        const payload = Object.fromEntries(formData.entries())
-        payload["extraLinks"] = JSON.stringify(extraLinks)
-        console.log("Submitting social links", payload)
-        setIsSubmitting(false)
+        const saveToastId = toast.loading("Saving social links...")
+        try {
+            const formData = new FormData(event.currentTarget)
+            const payload = {
+                website: formData.get("website")?.toString().trim(),
+                linkedin: formData.get("linkedin")?.toString().trim(),
+                social: formData.get("social")?.toString().trim() || undefined,
+                reviews: formData.get("reviews")?.toString().trim() || undefined,
+                workEmailDomain: formData.get("workEmailDomain")?.toString().trim(),
+                extraLinks: extraLinks
+                    .filter((l) => l.label.trim() && l.url.trim())
+                    .map((l) => ({ label: l.label.trim(), url: l.url.trim() })),
+            }
+
+            const res = await fetch("/api/company/profile/social-links", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload),
+            })
+
+            if (!res.ok) {
+                const error = await res.json()
+                toast.error(error?.message || "Failed to save social links")
+                return
+            }
+
+            toast.success("Social links saved")
+        } catch (error: any) {
+            toast.error(error?.message || "Something went wrong")
+        } finally {
+            toast.dismiss(saveToastId)
+            setIsSubmitting(false)
+        }
     }
 
     const addExtraLink = () => {
@@ -115,7 +145,14 @@ export default function CompanySocialLinksPage() {
 
                 <div className="flex justify-end gap-3">
                     <Button type="submit" disabled={isSubmitting}>
-                        {isSubmitting ? "Saving..." : "Save Social Links"}
+                        {isSubmitting ? (
+                            <span className="inline-flex items-center gap-2">
+                                <Loader2 className="h-4 w-4 animate-spin" />
+                                Saving...
+                            </span>
+                        ) : (
+                            "Save Social Links"
+                        )}
                     </Button>
                 </div>
             </form>
