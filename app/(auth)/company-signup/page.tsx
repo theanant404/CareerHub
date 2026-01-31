@@ -3,7 +3,6 @@
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
@@ -12,7 +11,7 @@ import { CompanySignupFormData } from "@/lib/validations/auth"
 
 export default function CompanySignupPage() {
   const router = useRouter()
-  
+
   const [formData, setFormData] = useState<CompanySignupFormData>({
     name: "",
     email: "",
@@ -23,7 +22,7 @@ export default function CompanySignupPage() {
     industry: "",
     size: "1-10",
   })
-  
+
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
   const [success, setSuccess] = useState("")
@@ -86,7 +85,7 @@ export default function CompanySignupPage() {
                   required
                 />
               </div>
-              
+
               <div className="space-y-2">
                 <label className="text-sm font-medium">Email</label>
                 <Input
@@ -119,7 +118,7 @@ export default function CompanySignupPage() {
                   </button>
                 </div>
               </div>
-              
+
               <div className="space-y-2">
                 <label className="text-sm font-medium">Confirm Password</label>
                 <div className="relative">
@@ -151,7 +150,7 @@ export default function CompanySignupPage() {
                   placeholder="https://company.com"
                 />
               </div>
-              
+
               <div className="space-y-2">
                 <label className="text-sm font-medium">Location</label>
                 <Input
@@ -173,7 +172,7 @@ export default function CompanySignupPage() {
                   required
                 />
               </div>
-              
+
               <div className="space-y-2">
                 <label className="text-sm font-medium">Company Size</label>
                 <Select value={formData.size} onValueChange={(value) => handleChange("size", value)}>
